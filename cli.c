@@ -50,7 +50,7 @@ void afficherTableau(int tableau[TAILLE][TAILLE], int taille) {
 	for(i = 0; i < taille; i++) {
 		printf(" %c -", indiceLettre(i));
 		for(j = 0; j < taille; j++)
-			printf(" %d ", tableau[i][j]);
+			printf(" %c ", tableau[i][j]);
 		printf("\n");
 	}
 
