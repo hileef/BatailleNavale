@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "cli.c"
 
-#define TAILLE 5
-#define TAILLE_BATEAU 3
-#define NOMBRE_BATEAUX 2
+#define TAILLE 10
+#define TAILLE_BATEAU 4
+#define NOMBRE_BATEAUX 3
 
 void initialiserTableau(int t[TAILLE][TAILLE]);
 void demanderPlacerBateaux(int bateauxJoueur1[TAILLE][TAILLE]);
@@ -93,7 +93,7 @@ void demanderPlacerBateaux(int bateauxJoueur1[TAILLE][TAILLE]){
 
 int placerBateau(char** coordonnees, int nombre, int bateaux[TAILLE][TAILLE]){
 	int i, j, x, y;
-	if(nombre == 3){
+	if(nombre == TAILLE_BATEAU){
 		// Verification
 		for(i = 0; i < nombre; i++)
 			if(verifierPresenceBateau(coordonnees[i][0] - 'A', coordonnees[i][1] - '0', bateaux)) return 0;

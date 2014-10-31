@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TAILLE 5
+#define TAILLE 10
 
 void afficherTableau(int tableau[TAILLE][TAILLE], int taille);
 void demander(char* s, char* t, int n);
