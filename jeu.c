@@ -6,7 +6,6 @@ int main() {
 
 	char entree[100];
 
-	//CELINE
 	do {
 		nettoyerAffichage();
 		printf("Bonjour, bienvenue sur notre sublissime jeu.\n");
