@@ -8,7 +8,8 @@ int main() {
 
 	char entree[100];
 
-	//CELINE
+	// CELINE
+	// ELIOT test
 	
 	do {
 		nettoyerAffichage();
