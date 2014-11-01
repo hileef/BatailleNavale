@@ -1,27 +1,39 @@
+/*  *** CLI.C ***
+
+Ce fichier contient toute les fonctions relatives à la ligen de commande,
+c'est à dire (récupération d'informations et affichage, entrées & sorties).
+
+*/
+
+// Directives de préprocesseur
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "proprietes.c"
 
-#define TAILLE 10
-
-void afficherTableau(int tableau[TAILLE][TAILLE], int taille);
+// Les prorotypes publics
+void afficherTableau(int tableau[TAILLE][TAILLE]);
 void demander(char* s, char* t, int n);
 void nettoyerAffichage();
-char indiceLettre(int x);
+char lettreDeChiffre(int x);
 
+// Les prorotypes privés
 static void glup(char* t, int n);
 static void vidange();
-
 static char** EUStringToStringTable(char* s, char sep, int* length);
 static int EUcountSeparators(char* s, int size, char separator);
 
-// LES FONCTIONS CI-DESSOUS SONT DISPONIBLES POUR L'UTILISATEUR
-
+// DEMANDER 
+// equivalent de scanf, mais passe par fgets pour plus de sécurité.
 void demander(char* s, char* t, int n) {
 	printf("%s", s);
 	glup(t, n);
 }
 
+// DEMANDER TABLEAU
+// equivalent de scanf suivi de l'equivalent de la
+// fonction split de Javascript utilisée avec ' '
+// ATTENTION : CETTE VERSION UTILISE EUStringToStringTable. >> sera bientôt remplacé.
 char** demanderTableau(char* s, int* n) {
 	printf("%s", s);
 	char target[100];
@@ -29,6 +41,9 @@ char** demanderTableau(char* s, int* n) {
 	return EUStringToStringTable(target ,' ', n);
 }
 
+// NETTOYER AFFICHAGE
+// equivalent de CLS sur windows et clear sur linux, vide
+// l'affichage de la console
 void nettoyerAffichage() {
 	#ifdef _WIN32	// If we are compiling on windows
 	system("CLS");
@@ -37,19 +52,22 @@ void nettoyerAffichage() {
 	#endif
 }
 
-void afficherTableau(int tableau[TAILLE][TAILLE], int taille) {
+// AFFICHER TABLEAU
+// Affiche un tableau à deux dimensions de taille TAILLExTAILLE
+// à la console.
+void afficherTableau(int tableau[TAILLE][TAILLE]) {
 	int i, j;
 
 	printf("    ");
-	for(i = 0; i < taille; i++)
+	for(i = 0; i < TAILLE; i++)
 		printf(" %d ", i);
 	printf("\n    ");
-	for(i = 0; i < taille; i++)
+	for(i = 0; i < TAILLE; i++)
 		printf(" - ");
 	printf("\n");
-	for(i = 0; i < taille; i++) {
-		printf(" %c -", indiceLettre(i));
-		for(j = 0; j < taille; j++)
+	for(i = 0; i < TAILLE; i++) {
+		printf(" %c -", lettreDeChiffre(i));
+		for(j = 0; j < TAILLE; j++)
 			printf(" %c ", tableau[i][j]);
 		printf("\n");
 	}
@@ -57,23 +75,32 @@ void afficherTableau(int tableau[TAILLE][TAILLE], int taille) {
 	printf("\n");
 }
 
-char indiceLettre(int x) {
+// Conversion entre 'A' et son equivalent selon l'encodage
+char lettreDeChiffre(int x) {
 	return ('A' + x);
+}
+int chiffreDeLettre(char x) {
+	return (x - 'A');
 }
 
 
-// FONCTIONS PRIVEES, NON DISPONIBLES POUR L'UTILISATEUR
-
+// PRIVÉ ** GLUP
+// fgets sans le charactère entrée à la fin.
 static void glup(char* t, int n) {
 	fgets(t, n, stdin);
 	(t)[strlen(t) - 1] = '\0';
 }
+
+// PRIVÉ ** VIDANGE
+// Vide la flux stdin, peut causer une demande à l'utilisateur attendant entrée.
 static void vidange() {
 	char c;
 	while((c = getchar()) != '\0' && c != EOF && c != '\n');
 }
 
+// PRIVÉ ** EUStringToStringTable
 // Parses String to String table using separator sep
+// WARNING: THIS USES MALLOC. ALLOCATED RESOURCES MUST BE FREED.
 static char** EUStringToStringTable(char* s, char sep, int* length) {
 	int i, j, k, l, m, n, N;
 	char** table;
@@ -105,7 +132,8 @@ static char** EUStringToStringTable(char* s, char sep, int* length) {
 
 }
 
-// Counts occurence of character separator in string
+// PRIVÉ ** EUcountSeparators
+// Counts occurences of character separator in string
 static int EUcountSeparators(char* s, int size, char separator) {
 	int i, n;
 	for(i = n = 0; i < size; i++)
