@@ -17,8 +17,9 @@ Ce fichier contient les directives de preprocesseur communes aux proprietes du j
 #define TAILLE_BATEAU 4
 #define NOMBRE_BATEAUX 3
 #define VIDE '.'
-#define TOUCHE '#'
-#define PLOUF 'o'
+#define TOUCHE 'X'
+#define COULE '#'
+#define PLOUF 'O'
 
 // Sortie de la condition que ces directives n'ont pas déja étés lancées.
 #endif

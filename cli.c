@@ -6,39 +6,53 @@ c'est à dire (récupération d'informations et affichage, entrées & sorties).
 */
 
 // Directives de préprocesseur
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "proprietes.c"
-
-// Les prorotypes publics
-void afficherTableau(int tableau[TAILLE][TAILLE]);
-void demander(char* s, char* t, int n);
-void nettoyerAffichage();
-char lettreDeChiffre(int x);
+#include "cli.h"
 
 // Les prorotypes privés
 static void glup(char* t, int n);
 static void vidange();
-static char** EUStringToStringTable(char* s, char sep, int* length);
-static int EUcountSeparators(char* s, int size, char separator);
+static void tokky(char* s, char** cible, int length);
+static int compterEspaces(char* s);
+static void split(char* s, char** cible, int taille);
+
+
+
+int demanderCoordonnee(char* s, Coordonnee* cible) {
+	char target[100];
+	demander(s, target, 100);
+	return entrerCoordonnee(target, cible);
+}
+
+int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
+	int i, n, r, x;
+	char entree[100];
+
+	demander(s, entree, 100);
+	n = compterEspaces(entree) + 1;
+	n = (n > tailleMax) ? tailleMax : n;
+
+	char **splitte;
+	splitte = malloc(sizeof(char*) * n);
+	for(i = 0; i < n; i++)
+		splitte[i] = malloc(sizeof(char) * 100);
+
+	split(entree, splitte, n);
+	
+	r = peutReformatterEntree(splitte, n);
+	x = entrerCoordonneesEtReformatter(splitte, cible, n, r);
+	
+	for(i = 0; i < n; i++)
+		free(splitte[i]);
+	free(splitte);
+
+	return x;
+}
 
 // DEMANDER 
 // equivalent de scanf, mais passe par fgets pour plus de sécurité.
 void demander(char* s, char* t, int n) {
 	printf("%s", s);
 	glup(t, n);
-}
-
-// DEMANDER TABLEAU
-// equivalent de scanf suivi de l'equivalent de la
-// fonction split de Javascript utilisée avec ' '
-// ATTENTION : CETTE VERSION UTILISE EUStringToStringTable. >> sera bientôt remplacé.
-char** demanderTableau(char* s, int* n) {
-	printf("%s", s);
-	char target[100];
-	glup(target, 100);
-	return EUStringToStringTable(target ,' ', n);
 }
 
 // NETTOYER AFFICHAGE
@@ -50,6 +64,7 @@ void nettoyerAffichage() {
 	#else			// If we are compiling for linux/unix
 	system("clear");
 	#endif
+	printf(" #### SUPER BATAILLE NAVALE :D #### \n\n");
 }
 
 // AFFICHER TABLEAU
@@ -63,10 +78,10 @@ void afficherTableau(int tableau[TAILLE][TAILLE]) {
 		printf(" %d ", i);
 	printf("\n    ");
 	for(i = 0; i < TAILLE; i++)
-		printf(" - ");
+		printf("   ");
 	printf("\n");
 	for(i = 0; i < TAILLE; i++) {
-		printf(" %c -", lettreDeChiffre(i));
+		printf(" %c  ", lettreDeChiffre(i));
 		for(j = 0; j < TAILLE; j++)
 			printf(" %c ", tableau[i][j]);
 		printf("\n");
@@ -98,45 +113,41 @@ static void vidange() {
 	while((c = getchar()) != '\0' && c != EOF && c != '\n');
 }
 
-// PRIVÉ ** EUStringToStringTable
-// Parses String to String table using separator sep
-// WARNING: THIS USES MALLOC. ALLOCATED RESOURCES MUST BE FREED.
-static char** EUStringToStringTable(char* s, char sep, int* length) {
+// PROBLEMS TO FIX HERE : STD FUNCTION FAILS,
+// MY FUNCTION BETTER BUT TO SIMPLIFY
+static void split(char* s, char** cible, int taille) {
+	int i, length;
+	tokky(s, cible, taille);
+}
+
+// PRIVÉ ** compterEspaces
+// Compte le nombre d'espaces trouvés dans un string
+static int compterEspaces(char* s) {
+	int i, n, size = strlen(s);
+	for(i = n = 0; i < size; i++)
+		if(s[i] == ' ') n++;
+	return n;
+}
+
+// new version of EUStringToStringTable, replaced to tokky
+static void tokky(char* s, char** cible, int length) {
 	int i, j, k, l, m, n, N;
-	char** table;
-	char* word;
 	
 	i = j = k = l = m = n = 0;
 
 	N = strlen(s);
-	n = EUcountSeparators(s, N, sep) + 1;
-	table = (char**) malloc(sizeof(char*) * n);
-	word = (char*) malloc(sizeof(char) * (k+1));
+	n = length;
 
 	for(i = 0; i <= N; i++) {
 		j++;
-		if((s[i] == sep || s[i] == '\0') && i != 0) {
+		if((s[i] == ' ' || s[i] == '\0') && i != 0) {
 			k = j - 1;
-			word = (char*) malloc(sizeof(char) * (k));
 			for(l = 0; l < k; l++)
-				word[l] =  s[(i - k) + l];
-			word[k] = '\0';
-			table[m] = word;
+				cible[m][l] =  s[(i - k) + l];
+			cible[m][k] = '\0';
 			j = 0;
 			m++;
 		}
 	}
 
-	*length = n;
-	return table;
-
-}
-
-// PRIVÉ ** EUcountSeparators
-// Counts occurences of character separator in string
-static int EUcountSeparators(char* s, int size, char separator) {
-	int i, n;
-	for(i = n = 0; i < size; i++)
-		if(s[i] == separator) n++;
-	return n;
 }
