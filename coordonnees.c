@@ -38,8 +38,8 @@ int entrerCoordonneesEtReformatter(char** entree, Coordonnee cible[], int nombre
 
 }
 
-// 	Verifie si une entree peuvent êtres reformatées exemple: 'A0 A3' -> 'A0 A1 A2 A3'
-//		renvoie 0 si impossible, sinon renvoie le nombre total après reformattage
+// 	Verifie si une entree peuvent êtres reformatees exemple: 'A0 A3' -> 'A0 A1 A2 A3'
+//		renvoie 0 si impossible, sinon renvoie le nombre total apres reformattage
 int peutReformatterEntree(char** entree, int nombre) {
 	Coordonnee a, b;
 	if(nombre == 2) {
@@ -52,7 +52,7 @@ int peutReformatterEntree(char** entree, int nombre) {
 //	Verifie si cette entree correspond bien a une coordonne valide,
 //		si oui sauvegarder dans c et renvoyer 1 sinon renvoyer 0
 int entrerCoordonnee(char* entree, Coordonnee* c) {
-	// Si il y a bien exactement 2 charactères dans l'entree
+	// Si il y a bien exactement 2 characteres dans l'entree
 	if(entree[0] != '\0' &&  entree[1] != '\0' && entree[2] == '\0') {
 		return validerCoordonnee(entree[0], entree[1], c);
 	} else return 0;
@@ -128,8 +128,8 @@ static int sontALaSuite(Coordonnee cible[], int nombre, int orientation) {
 
 
 
-// 	Verifie si deux coordonnees peuvent êtres reformatées (ex A1,A3 -> A1,A2,A3 ) 
-//		renvoie 0 si impossible, sinon renvoie le nombre d'elements après reformattage
+// 	Verifie si deux coordonnees peuvent êtres reformatees (ex A1,A3 -> A1,A2,A3 ) 
+//		renvoie 0 si impossible, sinon renvoie le nombre d'elements apres reformattage
 static int peutReformatter(Coordonnee a, Coordonnee b) {
 	Coordonnee t[2];
 	t[0] = a;

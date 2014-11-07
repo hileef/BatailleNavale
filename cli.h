@@ -1,7 +1,7 @@
 /*  *** CLI.H ***
 
-Ce fichier contient toute les fonctions relatives à la ligen de commande,
-c'est à dire (récupération d'informations et affichage, entrées & sorties).
+Ce fichier contient toute les fonctions relatives a la ligen de commande,
+c'est a dire (recuperation d'informations et affichage, entrees & sorties).
 
 */
 
@@ -21,5 +21,6 @@ void nettoyerAffichage();
 char lettreDeChiffre(int x);
 int demanderCoordonnee(char* s, Coordonnee* cible);
 int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax);
+void pause();
 
 #endif

@@ -1,14 +1,14 @@
 /*  *** CLI.C ***
 
-Ce fichier contient toute les fonctions relatives à la ligen de commande,
-c'est à dire (récupération d'informations et affichage, entrées & sorties).
+Ce fichier contient toute les fonctions relatives a la ligen de commande,
+c'est a dire (recuperation d'informations et affichage, entrees & sorties).
 
 */
 
-// Directives de préprocesseur
+// Directives de preprocesseur
 #include "cli.h"
 
-// Les prorotypes privés
+// Les prorotypes prives
 static void glup(char* t, int n);
 static void vidange();
 static void tokky(char* s, char** cible, int length);
@@ -16,6 +16,12 @@ static int compterEspaces(char* s);
 static void split(char* s, char** cible, int taille);
 
 
+
+void pause() {
+	char poubelle[1];
+	printf("\nAppuyez sur Entrer pour continuer...");
+	vidange();
+}
 
 int demanderCoordonnee(char* s, Coordonnee* cible) {
 	char target[100];
@@ -49,7 +55,7 @@ int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
 }
 
 // DEMANDER 
-// equivalent de scanf, mais passe par fgets pour plus de sécurité.
+// equivalent de scanf, mais passe par fgets pour plus de securite.
 void demander(char* s, char* t, int n) {
 	printf("%s", s);
 	glup(t, n);
@@ -68,8 +74,8 @@ void nettoyerAffichage() {
 }
 
 // AFFICHER TABLEAU
-// Affiche un tableau à deux dimensions de taille TAILLExTAILLE
-// à la console.
+// Affiche un tableau a deux dimensions de taille TAILLExTAILLE
+// a la console.
 void afficherTableau(int tableau[TAILLE][TAILLE]) {
 	int i, j;
 
@@ -99,15 +105,15 @@ int chiffreDeLettre(char x) {
 }
 
 
-// PRIVÉ ** GLUP
-// fgets sans le charactère entrée à la fin.
+// PRIVe ** GLUP
+// fgets sans le charactere entree a la fin.
 static void glup(char* t, int n) {
 	fgets(t, n, stdin);
 	(t)[strlen(t) - 1] = '\0';
 }
 
-// PRIVÉ ** VIDANGE
-// Vide la flux stdin, peut causer une demande à l'utilisateur attendant entrée.
+// PRIVe ** VIDANGE
+// Vide la flux stdin, peut causer une demande a l'utilisateur attendant entree.
 static void vidange() {
 	char c;
 	while((c = getchar()) != '\0' && c != EOF && c != '\n');
@@ -120,8 +126,8 @@ static void split(char* s, char** cible, int taille) {
 	tokky(s, cible, taille);
 }
 
-// PRIVÉ ** compterEspaces
-// Compte le nombre d'espaces trouvés dans un string
+// PRIVe ** compterEspaces
+// Compte le nombre d'espaces trouves dans un string
 static int compterEspaces(char* s) {
 	int i, n, size = strlen(s);
 	for(i = n = 0; i < size; i++)
