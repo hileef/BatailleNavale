@@ -172,3 +172,62 @@ static void reformatter(Coordonnee cible[], int taille) {
 
 
 
+void testsCoordonnees() {
+	printf("\n###################################");
+	printf("\n### *** FICHIER COORDONNEES *** ###\n");
+
+	char* entrees[3];
+	entrees[0] = "B9";
+	entrees[1] = "A3";
+	entrees[2] = "C5";
+	
+	char* entrees2[2];
+	entrees2[0] = "A0";
+	entrees2[1] = "A3";
+
+	printf("\n # FONCTION initCoordonnee()\n");
+	Coordonnee c;
+	initCoordonnee(5,9, &c);
+	assertEquals(c.y, 5, "Test Coordonnee c.y = 5");
+	assertEquals(c.x, 9, "Test Coordonnee c.x = 9");
+	
+	printf("\n # FONCTION initCoordonnees()\n");
+	Coordonnee liste[4];
+	initCoordonnees(liste, 3);
+	assertEquals(liste[0].y, 0, "Test Coordonnee liste[0].y = 0");
+	assertEquals(liste[0].x, 0, "Test Coordonnee liste[0].x = 0");
+	assertEquals(liste[1].y, 0, "Test Coordonnee liste[1].y = 0");
+	assertEquals(liste[1].x, 0, "Test Coordonnee liste[1].x = 0");
+	assertEquals(liste[2].y, 0, "Test Coordonnee liste[2].y = 0");
+	assertEquals(liste[2].x, 0, "Test Coordonnee liste[2].x = 0");
+	
+	printf("\n # FONCTION entrerCoordonnee()\n");
+	entrerCoordonnee("B9", &c);
+	assertEquals(c.y, 1, "Test Coordonnee c.y = 1 ('B')");
+	assertEquals(c.x, 9, "Test Coordonnee c.x = 9");
+	
+	printf("\n # FONCTION entrerCoordonnees()\n");
+	entrerCoordonnees(entrees, liste, 3);
+	assertEquals(liste[0].y, 1, "Test Coordonnee liste[0].y = 1 ('B')");
+	assertEquals(liste[0].x, 9, "Test Coordonnee liste[0].x = 9");
+	assertEquals(liste[1].y, 0, "Test Coordonnee liste[1].y = 0 ('A')");
+	assertEquals(liste[1].x, 3, "Test Coordonnee liste[1].x = 3");
+	assertEquals(liste[2].y, 2, "Test Coordonnee liste[2].y = 2 ('C')");
+	assertEquals(liste[2].x, 5, "Test Coordonnee liste[2].x = 5");
+	
+	printf("\n # FONCTION entrerCoordonneesEtReformatter()\n");
+	entrerCoordonneesEtReformatter(entrees2, liste, 2, 4);
+	assertEquals(liste[0].y, 0, "Test Coordonnee liste[0].y = 0 ('A')");
+	assertEquals(liste[0].x, 0, "Test Coordonnee liste[0].x = 0");
+	assertEquals(liste[1].y, 0, "Test Coordonnee liste[1].y = 1 ('A')");
+	assertEquals(liste[1].x, 1, "Test Coordonnee liste[1].x = 0");
+	assertEquals(liste[2].y, 0, "Test Coordonnee liste[2].y = 2 ('A')");
+	assertEquals(liste[2].x, 2, "Test Coordonnee liste[2].x = 0");
+	assertEquals(liste[3].y, 0, "Test Coordonnee liste[2].y = 2 ('A')");
+	assertEquals(liste[3].x, 3, "Test Coordonnee liste[2].x = 3");
+	
+	printf("\n # FONCTION peutReformatterEntree()\n");
+	assertEquals(peutReformatterEntree(entrees2, 2), 4, "Test peutReformatterEntree(A0 A3) -> 4");
+	entrees2[1] = "C3";
+	assertEquals(peutReformatterEntree(entrees2, 2), 0, "Test peutReformatterEntree(A0 C3) -> 0");
+}

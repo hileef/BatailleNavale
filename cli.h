@@ -12,15 +12,17 @@ c'est a dire (recuperation d'informations et affichage, entrees & sorties).
 #include <stdlib.h>
 #include <string.h>
 #include "coordonnees.h"
-#include "proprietes.c"
+#include "proprietes.cpp"
 
 // Les prorotypes publics
+void pause();
+void afficherAccueil();
 void afficherTableau(int tableau[TAILLE][TAILLE]);
 void demander(char* s, char* t, int n);
 void nettoyerAffichage();
+void couleur(int x);
 char lettreDeChiffre(int x);
 int demanderCoordonnee(char* s, Coordonnee* cible);
 int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax);
-void pause();
 
 #endif

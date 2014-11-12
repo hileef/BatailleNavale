@@ -8,12 +8,14 @@ Ce fichier contient les directives de preprocesseur communes aux proprietes du j
 
 // Verifie que ces directives n'ont pas deja etes lancees.
 #ifndef PROPRIETES
+
+// Sinon, les definir comme ayant ete lancees
 #define PROPRIETES
 
 // *** LES PROPRIETES ***
 #define TAILLE 10
 #define TAILLE_BATEAU 3
-#define NOMBRE_BATEAUX 1
+#define NOMBRE_BATEAUX 4
 #define BATEAU 'B'
 #define VIDE '.'
 #define TOUCHE 'X'

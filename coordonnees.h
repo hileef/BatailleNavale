@@ -3,7 +3,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "proprietes.c"
+#include "unittest.h"
+#include "proprietes.cpp"
 
 typedef struct Coordonnee Coordonnee;
 struct Coordonnee {
@@ -17,5 +18,7 @@ int entrerCoordonnee(char* entree, Coordonnee* c);
 int entrerCoordonnees(char** entree, Coordonnee cible[], int nombre);
 int entrerCoordonneesEtReformatter(char** entree, Coordonnee cible[], int nombre, int reformattage);
 int peutReformatterEntree(char** entree, int nombre);
+
+void testsCoordonnees();
 
 #endif

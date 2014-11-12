@@ -14,60 +14,75 @@ Les proprietes & constantes globales de jeu dont plusieurs fichiers auront
 #include <stdlib.h>
 #include "jeu.h"
 
+
+// MAIN - Fonction de demarrage
+
+int accueil() {
+	nettoyerAffichage();
+	afficherAccueil();
+	char entree[100];
+	printf("Bonjour.\n");
+	printf("Pour tester, tapez 'test' \n");
+	printf("Pour jouer, tapez 'jeu'\n");
+	printf("Pour quitter, tapez 'quitter' \n");
+	demander(" : ", entree, 100);
+	if(entree[0] == 't' || entree[0] == 'T') return 2;
+	else if(entree[0] == 'q' || entree[0] == 'Q') return 0;
+	else return 1;
+	
+}
+
 int jouerPartie() {
 	int bateaux1[TAILLE][TAILLE];
 	int bateaux2[TAILLE][TAILLE];
 	int tirs1[TAILLE][TAILLE];
 	int tirs2[TAILLE][TAILLE];
-
+	
+	char rejouer[50];
 	char joueur1[50];
 	char joueur2[50];
-	char* gagnant;
-	demanderNomsJoueurs(joueur1, joueur2, 50);
 
 	initialiserTableau(bateaux1);
 	initialiserTableau(tirs1);
 	initialiserTableau(bateaux2);
 	initialiserTableau(tirs2);
 
+	nettoyerAffichage();
+	
+	couleur(1);
+	demander("Veuillez entrer le nom du premier joueur : ", joueur1, 50);
+	couleur(2);
+	demander("Veuillez entrer le nom du deuxieme joueur : ", joueur2, 50);
+	
+	couleur(1);
 	demanderBateaux(bateaux1, joueur1);
+	couleur(2);
 	demanderBateaux(bateaux2, joueur2);
 	
 	while(1) {
+		couleur(1);
 		demanderTir(tirs1, bateaux2, joueur1);
-		if(partieTerminee(tirs1, bateaux2)) { 
-			gagnant = joueur1;
-			break; }
+		if(partieTerminee(tirs1, bateaux2) == 1) break;
+		couleur(2);
 		demanderTir(tirs2, bateaux1, joueur2);
-		if(partieTerminee(tirs2, bateaux1)) { 
-			gagnant = joueur2;
-			break; }
+		if(partieTerminee(tirs2, bateaux1) == 1) break;
 	}
 	
+	
 	nettoyerAffichage();
-	printf("\n $$$  %s, VOUS AVEZ GAGNE! :D $$$  \n", gagnant);
+	printf("\n\n YOU'RE THE WINNER!! \n\n");
 	pause();
-
-	return 0;
+	
+	couleur(0);
+	
 }
 
-void demanderNomsJoueurs(char* j1, char* j2, int taille) {
-	nettoyerAffichage();
-	demander("Veuillez entrer le nom du premier joueur : ", j1, taille);
-	demander("Veuillez entrer le nom du deuxieme joueur : ", j2, taille);
-	nettoyerAffichage();
-}
-
-void demanderTir(int tirs[TAILLE][TAILLE], int bateaux[TAILLE][TAILLE], char* nom) {
+void demanderTir(int tirsJoueur2[TAILLE][TAILLE], int bateauxJoueur1[TAILLE][TAILLE], char* nom) {
 
 	// Declaration et initalisation variables requises
 	int valide, quitter, tir;
 	Coordonnee entree;
 	quitter = tir = valide = 1;
-
-	nettoyerAffichage();
-	printf("\n ---  %s, c'est a vous. ---  \n", nom);
-	pause();
 
 	// Boucle qui se relançera tant que les coordonnees entrees
 	// ne sont pas valide ou pas possible (ex: deja tire la)
@@ -75,27 +90,23 @@ void demanderTir(int tirs[TAILLE][TAILLE], int bateaux[TAILLE][TAILLE], char* no
 	
 		// Affichage infos requise, message d'erreurs
 		nettoyerAffichage();
-		afficherTableau(tirs);
+		afficherTableau(tirsJoueur2);
+		printf("%s, a toi!\n", nom);
 		if(valide != 1) printf("Coordonnees invalides. Veuillez reessayer.\n");
 		if(tir != 1) printf("Tir deja effectue. Veuillez reessayer.\n");
 		valide = tir = 1;
-		printf("%s, ", nom);
 
 		// Demandes coordonees de tirs, formatage
 		initCoordonnee(0, 0, &entree);
-		valide = demanderCoordonnee("veuillez entrer les coordonnees de tir. \n ( exemple: A1 ou: i8 ) : ", &entree);
+		valide = demanderCoordonnee("Veuillez entrer les coordonnees de tir. \n ( exemple: A1 ou: i8 ) : ", &entree);
 		
 		// Verifications validite, possibilite, et sauvegarde si verfication reussies.
-		if(valide == 1) tir = placerTir(&entree, tirs, bateaux);
+		if(valide == 1) tir = placerTir(&entree, tirsJoueur2, bateauxJoueur1);
 
-	} while(valide == 0 || tir == 0);
+	} while(valide != 1 || tir != 1);
 	
 	nettoyerAffichage();
-	afficherTableau(tirs);
-	if(tir == TOUCHE)
-		printf("TOUCHE! :D \n");
-	else
-		printf("Plouf... :/ \n");
+	afficherTableau(tirsJoueur2);
 	pause();
 
 }
@@ -104,7 +115,7 @@ void demanderTir(int tirs[TAILLE][TAILLE], int bateaux[TAILLE][TAILLE], char* no
 /*  PLACER TIR
 Cette fonction prends des coordonees valides, verfies s'il n'y a pas de tir deja
 	present a cet endroit, et si oui sauvegarde le tir, en verifiant si c'est
-	touche ou plouf. Renvoie 0 si le tir n'a pas ete effectue, sinon renvoie TOUCHE ou PLOUF. */
+	touche ou plouf. Renvoie 0 si le tir n'a pas ete effectue, 1 si sauvegarde. */
 int placerTir(Coordonnee *c, int tirs[TAILLE][TAILLE], int bateaux[TAILLE][TAILLE]) {
 	
 	// Si il y a deja eu un tir, renvoyer 0.
@@ -112,9 +123,11 @@ int placerTir(Coordonnee *c, int tirs[TAILLE][TAILLE], int bateaux[TAILLE][TAILL
 
 	// Sinon, si il y a un beateau, enregistrer TOUCHE, sinon PLOUF.
 	if(verifierPresenceBateau(c, bateaux))
-		return tirs[c->y][c->x] = TOUCHE;
+		tirs[c->y][c->x] = TOUCHE;
 	else
-		return tirs[c->y][c->x] = PLOUF;
+		tirs[c->y][c->x] = PLOUF;
+	return 1; 
+
 }
 
 /*	DEMANDER PLACER BATEAUX
@@ -123,16 +136,13 @@ Cette fonction affiche le tableau de bateaux du joueur, et lui demande de rentre
 	possibilite de placement du bateau sont evalues, le cas echouant les coordonees de bateau
 	sont re-demandees.
 	Si aucun probleme n'est rencontre, le placement de bateau est gere par PLACER BATEAU. */
-void demanderBateaux(int bateaux[TAILLE][TAILLE], char* nom){
+void demanderBateaux(int bateauxJoueur1[TAILLE][TAILLE], char* nom){
 	// Declaration et initlisation variables
 	int i, n, nombre, valide, placement;
 	placement = valide = 1;
 	nombre = n = 20;
 	Coordonnee entrees[n];
 	
-	nettoyerAffichage();
-	printf("\n ---  %s, c'est a vous. ---  \n", nom);
-	pause();
 
 	// Cette boucle demandera chaque entree de bateau pour le nombre de bateau a placer.
 	for(i = 0; i < NOMBRE_BATEAUX; i++) {
@@ -141,8 +151,9 @@ void demanderBateaux(int bateaux[TAILLE][TAILLE], char* nom){
 	do{
 		// Affichage infos requise
 		nettoyerAffichage();
-		afficherTableau(bateaux);
-		printf("%s, il vous reste %d bateau(x) de %d cases a placer.\n", nom, NOMBRE_BATEAUX - i, TAILLE_BATEAU);
+		afficherTableau(bateauxJoueur1);
+		printf("%s, a toi!\n", nom);
+		printf("Il vous reste %d bateau(x) de %d cases de votre flotte a placer.\n", NOMBRE_BATEAUX - i,  TAILLE_BATEAU);
 		
 
 		// Gestion messages d'erreurs
@@ -158,15 +169,15 @@ void demanderBateaux(int bateaux[TAILLE][TAILLE], char* nom){
 		// getchar();
 		
 		// Verifications validite, possibilite, et sauvegarde si verfication reussies.
-		if(valide > 0) placement = placerBateau(entrees, nombre, bateaux);
+		if(valide > 0) placement = placerBateau(entrees, nombre, bateauxJoueur1);
 		
 	} while(valide == 0 || placement == 0);
 
 	}
-
+	
 	nettoyerAffichage();
-	afficherTableau(bateaux);
-	printf("\n\n%s, vos bateaux sont maintenants places.\n", nom);
+	afficherTableau(bateauxJoueur1);
+	printf("Vos bateux sont maintenant places.\n");
 	pause();
 
 }
@@ -226,3 +237,67 @@ int partieTerminee(int tirs[TAILLE][TAILLE], int bateaux[TAILLE][TAILLE]) {
 	return 1;
 }
 
+
+
+
+
+
+
+void testsJeu() {
+	printf("\n###########################");
+	printf("\n### *** FICHIER JEU *** ###\n");
+
+	int bateaux[TAILLE][TAILLE];
+	
+	printf("\n # FONCTION initialiserTableau()\n");
+	initialiserTableau(bateaux);
+	assertEquals(bateaux[0][0], (int) VIDE, "Test bateaux[0][0] == VIDE");
+	assertEquals(bateaux[1][1], (int) VIDE, "Test bateaux[1][1] == VIDE");
+	assertEquals(bateaux[1][0], (int) VIDE, "Test bateaux[1][0] == VIDE");
+	assertEquals(bateaux[0][1], (int) VIDE, "Test bateaux[0][1] == VIDE");
+	
+	Coordonnee liste[4];
+	char* destroyer[2];
+	destroyer[0] = "A0";
+	destroyer[1] = "A3";
+	
+	
+	printf("\n # FONCTION placerBateau()\n");
+	printf("Test : qu'un bateau est bien place.\n");
+	entrerCoordonneesEtReformatter(destroyer, liste, 2, 4);
+	placerBateau(liste, 4, bateaux);
+	assertEquals(bateaux[0][0], (int) BATEAU, "Test pour Destroyer(A0,A3) bateaux[0][0] == BATEAU");
+	assertEquals(bateaux[0][1], (int) BATEAU, "Test pour Destroyer(A0,A3) bateaux[0][1] == BATEAU");
+	assertEquals(bateaux[0][2], (int) BATEAU, "Test pour Destroyer(A0,A3) bateaux[0][2] == BATEAU");
+	assertEquals(bateaux[0][3], (int) BATEAU, "Test pour Destroyer(A0,A3) bateaux[0][3] == BATEAU");
+	
+	destroyer[0] = "A0";
+	destroyer[1] = "D0";
+	printf("Test : qu'un bateau ne peut pas etre place sur un bateau existant\n");
+	entrerCoordonneesEtReformatter(destroyer, liste, 2, 4);
+	placerBateau(liste, 4, bateaux);
+	assertEquals(placerBateau(liste, 4, bateaux), 0, "Test placerBateau sur case occupee(A0,D0) == 0");
+	
+	printf("\n # FONCTION placerTir()\n");
+	int tirs[TAILLE][TAILLE];
+	initialiserTableau(tirs);
+	Coordonnee c;
+	initCoordonnee(0, 0, &c);
+	assertEquals(placerTir(&c, tirs, bateaux), 1, "Test placerTir sur case non tiree A0 == 1");
+	initCoordonnee(0, 0, &c);
+	assertEquals(placerTir(&c, tirs, bateaux), 0, "Test placerTir sur case deja tiree A0 == 0");
+	
+	printf("\n # FONCTION verifierPresenceBateau()\n");
+	assertEquals(verifierPresenceBateau(&c, bateaux), 1, "Test presence bateau case pleine A0 == 1");
+	initCoordonnee(9, 9, &c);
+	assertEquals(verifierPresenceBateau(&c, bateaux), 0, "Test presence bateau case vide J9 == 0");
+	
+	printf("\n # FONCTION partieTerminee()\n");
+	assertEquals(partieTerminee(tirs, bateaux), 0, "Test tous bateaux on ete touche (faux).");
+	tirs[0][0] = (int) TOUCHE;
+	tirs[0][1] = (int) TOUCHE;
+	tirs[0][2] = (int) TOUCHE;
+	tirs[0][3] = (int) TOUCHE;
+	assertEquals(partieTerminee(tirs, bateaux), 1, "Test tous bateaux on ete touche (vrai)");
+	
+}

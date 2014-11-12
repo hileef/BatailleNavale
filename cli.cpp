@@ -17,12 +17,6 @@ static void split(char* s, char** cible, int taille);
 
 
 
-void pause() {
-	char poubelle[1];
-	printf("\nAppuyez sur Entrer pour continuer...");
-	vidange();
-}
-
 int demanderCoordonnee(char* s, Coordonnee* cible) {
 	char target[100];
 	demander(s, target, 100);
@@ -38,9 +32,9 @@ int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
 	n = (n > tailleMax) ? tailleMax : n;
 
 	char **splitte;
-	splitte = malloc(sizeof(char*) * n);
+	splitte = (char**) malloc(sizeof(char*) * n);
 	for(i = 0; i < n; i++)
-		splitte[i] = malloc(sizeof(char) * 100);
+		splitte[i] = (char*) malloc(sizeof(char) * 100);
 
 	split(entree, splitte, n);
 	
@@ -70,7 +64,7 @@ void nettoyerAffichage() {
 	#else			// If we are compiling for linux/unix
 	system("clear");
 	#endif
-	printf(" #### SUPER BATAILLE NAVALE :D #### \n\n");
+	printf("              #### SUPER BATAILLE NAVALE :D #### \n\n");
 }
 
 // AFFICHER TABLEAU
@@ -90,7 +84,7 @@ void afficherTableau(int tableau[TAILLE][TAILLE]) {
 		printf(" %c  ", lettreDeChiffre(i));
 		for(j = 0; j < TAILLE; j++)
 			printf(" %c ", tableau[i][j]);
-		printf("\n");
+		printf("\n\n");
 	}
 
 	printf("\n");
@@ -156,4 +150,42 @@ static void tokky(char* s, char** cible, int length) {
 		}
 	}
 
+}
+
+void couleur(int x) {
+	#ifdef _WIN32
+	if(x == 1)
+		system("COLOR 0A");
+	else if(x == 2)
+		system("COLOR 0B");
+	else if(x == 3)
+		system("COLOR 0A");
+	else
+		system("COLOR 3F");
+	#endif
+}
+
+void afficherAccueil() {
+	printf("                                                       .         \n");
+	printf("         .                         .                  /|         \n");
+	printf("        /|                  .     /|\\                /_|         \n");
+	printf("       /_|                 /|    /_|_\\             ____|___      \n");
+	printf("~~~  ____|___  ~~~~~~~~~~ / |   /__|__\\ ~~~~~~~~~~ \\______/ ~~~~~\n");
+	printf("~~~~ \\______/ ~~~~~~~~~~ /__|  /___|___\\ ~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~ ____|______|_____ ~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~ \\_o_ _ _o_ _ _o_/ ~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ . ~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~ . ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   /|   ~~~~~~~~~\n");
+	printf("~~~~~~~~   /|  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   /_|   ~~~~~~~~~\n");
+	printf("~~~~~~~   /_|   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ____|___  ~~~~~~~\n");
+	printf("~~~~~~  ____|___  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\______/   ~~~~~~\n");
+	printf("~~~~~~  \\______/   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("\n\n\n");
+}
+
+void pause() {
+	char entree[50];
+	demander("\n Appuyez sur Entrer pour continuer... ", entree, 50);
 }
