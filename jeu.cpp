@@ -24,7 +24,7 @@ int accueil() {
 	printf("Bonjour.\n");
 	printf("Pour tester, tapez 'test' \n");
 	printf("Pour jouer, tapez 'jeu'\n");
-	printf("Pour quitter, tapez 'quitter' \n");
+	printf("Pour quitter, tapez 'quitter'");
 	demander(" : ", entree, 100);
 	if(entree[0] == 't' || entree[0] == 'T') return 2;
 	else if(entree[0] == 'q' || entree[0] == 'Q') return 0;
@@ -50,9 +50,9 @@ int jouerPartie() {
 	nettoyerAffichage();
 	
 	couleur(1);
-	demander("Veuillez entrer le nom du premier joueur : ", joueur1, 50);
+	demander("Veuillez entrer le nom du joueur 1 : ", joueur1, 50);
 	couleur(2);
-	demander("Veuillez entrer le nom du deuxieme joueur : ", joueur2, 50);
+	demander("Veuillez entrer le nom du joueur 2 : ", joueur2, 50);
 	
 	couleur(1);
 	demanderBateaux(bateaux1, joueur1);
@@ -70,7 +70,7 @@ int jouerPartie() {
 	
 	
 	nettoyerAffichage();
-	printf("\n\n YOU'RE THE WINNER!! \n\n");
+	printf("\n\n BRAVO !\n\n YOU'RE THE WINNER!! \n\n");
 	pause();
 	
 	couleur(0);
@@ -91,9 +91,9 @@ void demanderTir(int tirsJoueur2[TAILLE][TAILLE], int bateauxJoueur1[TAILLE][TAI
 		// Affichage infos requise, message d'erreurs
 		nettoyerAffichage();
 		afficherTableau(tirsJoueur2);
-		printf("%s, a toi!\n", nom);
-		if(valide != 1) printf("Coordonnees invalides. Veuillez reessayer.\n");
-		if(tir != 1) printf("Tir deja effectue. Veuillez reessayer.\n");
+		printf("%s, c'est ton tour !\n", nom);
+		if(valide != 1) printf("Coordonnees invalides. Recommence.\n");
+		if(tir != 1) printf("Tir fait auparavant. Recommence.\n");
 		valide = tir = 1;
 
 		// Demandes coordonees de tirs, formatage
@@ -152,13 +152,13 @@ void demanderBateaux(int bateauxJoueur1[TAILLE][TAILLE], char* nom){
 		// Affichage infos requise
 		nettoyerAffichage();
 		afficherTableau(bateauxJoueur1);
-		printf("%s, a toi!\n", nom);
+		printf("%s, c'est ton tour!\n", nom);
 		printf("Il vous reste %d bateau(x) de %d cases de votre flotte a placer.\n", NOMBRE_BATEAUX - i,  TAILLE_BATEAU);
 		
 
 		// Gestion messages d'erreurs
-		if(valide == 0) printf("Attention : Coordonnees invalides. Veuillez reessayer.\n");
-		if(placement == 0) printf("Attention : Placement de bateau impossible. Veuillez reessayer.\n");
+		if(valide == 0) printf("Attention : Coordonnees invalides. Recommence.\n");
+		if(placement == 0) printf("Attention : Placement de bateau impossible. Recommence.\n");
 		valide = placement = 1;
 		
 		// Demandes coordonees de bateaux, formatage
@@ -177,7 +177,7 @@ void demanderBateaux(int bateauxJoueur1[TAILLE][TAILLE], char* nom){
 	
 	nettoyerAffichage();
 	afficherTableau(bateauxJoueur1);
-	printf("Vos bateux sont maintenant places.\n");
+	printf("Vos bateux sont maintenant mis en place.\n");
 	pause();
 
 }
