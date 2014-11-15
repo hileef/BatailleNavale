@@ -77,10 +77,11 @@ int jouerPartie() {
 	
 }
 
+
 void demanderTir(int tirsJoueur2[TAILLE][TAILLE], int bateauxJoueur1[TAILLE][TAILLE], char* nom) {
 
 	// Declaration et initalisation variables requises
-	int valide, quitter, tir;
+	int valide, quitter, tir, radar;
 	Coordonnee entree;
 	quitter = tir = valide = 1;
 
@@ -107,6 +108,10 @@ void demanderTir(int tirsJoueur2[TAILLE][TAILLE], int bateauxJoueur1[TAILLE][TAI
 	
 	nettoyerAffichage();
 	afficherTableau(tirsJoueur2);
+	radar = superRadar(&entree, bateauxJoueur1);
+	//printf("RADAR = %d\n", radar);
+	if(radar > 0 && verifierPlouf(&entree, bateauxJoueur1))
+		printf("\nLe radar a detecte un bateau dans un rayon de %d cases.\n", radar);
 	pause();
 
 }
@@ -217,6 +222,10 @@ int verifierPresenceBateau(Coordonnee *c, int bateaux[TAILLE][TAILLE]) {
 	return (bateaux[c->y][c->x] != VIDE) ? 1: 0;
 }
 
+int verifierPlouf(Coordonnee *c, int bateaux[TAILLE][TAILLE]) {
+	return (bateaux[c->y][c->x] != PLOUF) ? 1: 0;
+}
+
 /* INITALISER TABLEAU
 Initialise un tableau a deux dimension de taille TAILLExTAILLE.
 Le tableau sera rempli avec la propriete VIDE. */
@@ -237,7 +246,36 @@ int partieTerminee(int tirs[TAILLE][TAILLE], int bateaux[TAILLE][TAILLE]) {
 	return 1;
 }
 
+int radar(Coordonnee* tir, int bateaux[TAILLE][TAILLE]) {
+	int i, j, k, dy, dx, proche = RAYON_RADAR;
+	for(i = tir->y - RAYON_RADAR; i < tir->y + RAYON_RADAR; i++) {
+		for(j = tir->x - RAYON_RADAR; j < tir->x + RAYON_RADAR; j++) {
+			if(!(i == tir->y && j == tir->x)) {
+				if(bateaux[i][j] == BATEAU) {
+					return 1;
+				}
+			}
+		}
+	}
+	return 0;
+}
 
+int superRadar(Coordonnee* tir, int bateaux[TAILLE][TAILLE]) {
+	int i, j, k, d, dx, dy, proche = 0;
+	for(i = tir->y - RAYON_RADAR; i < tir->y + RAYON_RADAR; i++) {
+		for(j = tir->x - RAYON_RADAR; j < tir->x + RAYON_RADAR; j++) {
+			if((bateaux[i][j] == BATEAU) && (!(i == tir->y && j == tir->x))) {
+				dy = tir->y - i;
+				dx = tir->x - j;
+				d = (dy > dx) ? dy : dx;
+				for(k = RAYON_RADAR; k > 0 ; k--)
+					if(d == k || d == -k || d == k || d == -k) proche = k;
+			}
+		}
+	}
+	return proche;
+	
+}
 
 
 
@@ -299,5 +337,29 @@ void testsJeu() {
 	tirs[0][2] = (int) TOUCHE;
 	tirs[0][3] = (int) TOUCHE;
 	assertEquals(partieTerminee(tirs, bateaux), 1, "Test tous bateaux on ete touche (vrai)");
+	
+	printf("\n # FONCTION radar()\n");
+	initialiserTableau(bateaux);
+	initialiserTableau(tirs);
+	
+	Coordonnee liste2[4];
+	char* destroyer2[2];
+	destroyer2[0] = "A0";
+	destroyer2[1] = "A3";
+	entrerCoordonneesEtReformatter(destroyer2, liste2, 2, 4);
+	placerBateau(liste2, 4, bateaux);
+	
+	Coordonnee d, e, f, g, h;
+	initCoordonnee(2, 2, &d);
+	initCoordonnee(1, 2, &e);
+	initCoordonnee(9, 9, &f);
+	initCoordonnee(3, 2, &g);
+	initCoordonnee(0, 6, &h);
+	
+	assertEquals(superRadar(&d, bateaux), 2, "Test radar proche.");
+	assertEquals(superRadar(&e, bateaux), 1, "Test radar proche.");
+	assertEquals(superRadar(&f, bateaux), 0, "Test radar loin.");
+	assertEquals(superRadar(&g, bateaux), 3, "Test radar proche.");
+	assertEquals(superRadar(&h, bateaux), 3, "Test radar proche.");
 	
 }

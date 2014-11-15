@@ -6,10 +6,10 @@ void lancerTests();
 
 int main() {
 
-	int dir;
+	int choix;
 	couleur(0);
-	while(dir = accueil()) {
-		if(dir == 1)
+	while(choix = accueil()) {
+		if(choix == 1)
 			jouerPartie();
 		else
 			lancerTests();
