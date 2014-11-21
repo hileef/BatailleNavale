@@ -6,18 +6,26 @@
 #include "unittest.h"
 #include "proprietes.cpp"
 
-typedef struct Coordonnee Coordonnee;
 struct Coordonnee {
 	int y;
 	int x;
 };
+typedef struct Coordonnee Coordonnee;
 
-void initCoordonnee(int i, int j, Coordonnee* c);
-void initCoordonnees(Coordonnee x[], int n);
-int entrerCoordonnee(char* entree, Coordonnee* c);
-int entrerCoordonnees(char** entree, Coordonnee cible[], int nombre);
-int entrerCoordonneesEtReformatter(char** entree, Coordonnee cible[], int nombre, int reformattage);
-int peutReformatterEntree(char** entree, int nombre);
+void setY(Coordonnee* c, int y);
+void setX(Coordonnee* c, int x);
+int getY(Coordonnee* c);
+int getX(Coordonnee* c);
+
+bool egal(Coordonnee* a, Coordonnee* b);
+
+void initCoordonnee(Coordonnee* c);
+void initCoordonnee(Coordonnee* c, int i, int j);
+bool initCoordonnee(Coordonnee* c, char* texte);
+
+int initSuiteCoordonnees(Coordonnee cible[], int n);
+int initSuiteCoordonnees(Coordonnee cible[], int n, int i, int j);
+int initSuiteCoordonnees(Coordonnee cible[], int n, char** textes);
 
 void testsCoordonnees();
 

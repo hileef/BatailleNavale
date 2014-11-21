@@ -7,6 +7,7 @@ c'est a dire (recuperation d'informations et affichage, entrees & sorties).
 
 // Directives de preprocesseur
 #include "cli.h"
+#include "plateau.h"
 
 // Les prorotypes prives
 static void glup(char* t, int n);
@@ -18,13 +19,13 @@ static void split(char* s, char** cible, int taille);
 
 
 int demanderCoordonnee(char* s, Coordonnee* cible) {
-	char target[100];
-	demander(s, target, 100);
-	return entrerCoordonnee(target, cible);
+	char texte[100];
+	demander(s, texte, 100);
+	return initCoordonnee(cible, texte);
 }
 
 int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
-	int i, n, r, x;
+	int i, n, x;
 	char entree[100];
 
 	demander(s, entree, 100);
@@ -37,9 +38,8 @@ int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
 		splitte[i] = (char*) malloc(sizeof(char) * 100);
 
 	split(entree, splitte, n);
-	
-	r = peutReformatterEntree(splitte, n);
-	x = entrerCoordonneesEtReformatter(splitte, cible, n, r);
+
+	x = initSuiteCoordonnees(cible, n, splitte);
 	
 	for(i = 0; i < n; i++)
 		free(splitte[i]);
@@ -50,9 +50,20 @@ int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
 
 // DEMANDER 
 // equivalent de scanf, mais passe par fgets pour plus de securite.
+void demander(char* s, char* t) {
+	demander(s, t, TAILLE_ENTREE);
+}
 void demander(char* s, char* t, int n) {
 	printf("%s", s);
 	glup(t, n);
+}
+
+void afficher(char* s) {
+	printf("%s", s);
+}
+
+void debug(char* s) {
+	printf("DEBUG : %s \n", s);
 }
 
 // NETTOYER AFFICHAGE
@@ -90,12 +101,36 @@ void afficherTableau(int tableau[TAILLE][TAILLE]) {
 	printf("\n");
 }
 
+void afficherPlateau(Plateau* p) {
+	int i, j, taille = p->taille;
+
+	printf("    ");
+	for(i = 0; i < taille; i++)
+		printf(" %d ", i);
+	printf("\n    ");
+	for(i = 0; i < taille; i++)
+		printf("   ");
+	printf("\n");
+	for(i = 0; i < taille; i++) {
+		printf(" %c  ", lettreDeChiffre(i));
+		for(j = 0; j < taille; j++)
+			printf(" %c ", getCase(p, i, j));
+		printf("\n\n");
+	}
+
+	printf("\n");
+}
+
 // Conversion entre 'A' et son equivalent selon l'encodage
 char lettreDeChiffre(int x) {
 	return ('A' + x);
 }
 int chiffreDeLettre(char x) {
 	return (x - 'A');
+}
+
+void intToString(char* s, int x) {
+	sprintf(s, "%d", x);
 }
 
 
@@ -183,6 +218,44 @@ void afficherAccueil() {
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	printf("\n\n\n");
+	printf("Bonjour.\n");
+	printf("Pour tester, tapez 'test' \n");
+	printf("Pour jouer, tapez 'jeu'\n");
+	printf("Pour quitter, tapez 'quitter' \n");
+}
+
+void afficherAccueil_v2() {
+	printf("                                                       .         \n");
+	printf("         .                         .                  /|         \n");
+	printf("        /|                  .     /|\\                /_|         \n");
+	printf("       /_|                 /|    /_|_\\             ____|___      \n");
+	printf("~~~  ____|___  ~~~~~~~~~~ / |   /__|__\\ ~~~~~~~~~~ \\______/ ~~~~~\n");
+	printf("~~~~ \\______/ ~~~~~~~~~~ /__|  /___|___\\ ~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~ ____|______|_____ ~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~ \\_o_ _ _o_ _ _o_/ ~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ . ~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~ . ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   /|   ~~~~~~~~~\n");
+	printf("~~~~~~~~   /|  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   /_|   ~~~~~~~~~\n");
+	printf("~~~~~~~   /_|   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ____|___  ~~~~~~~\n");
+	printf("~~~~~~  ____|___  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\______/   ~~~~~~\n");
+	printf("~~~~~~  \\______/   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("\n\n\n");
+	printf("Bonjour.\n");
+	printf("Pour les options, tapez 'options' \n");
+	printf("Pour tester, tapez 'test' \n");
+	printf("Pour jouer, tapez 'jeu'\n");
+	printf("Pour quitter, tapez 'quitter' \n");
+}
+
+void afficherBateauxDisponibles() {
+	int i;
+	printf("Vous pouvez placer :\n");
+	for(i = 0; i < TAILLES_MAX; i++)
+		if(TAILLES[i] > 0)
+			printf("%d bateaux de : %d cases \n", TAILLES[i], i + 1);
+	
 }
 
 void pause() {

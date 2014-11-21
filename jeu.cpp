@@ -21,11 +21,8 @@ int accueil() {
 	nettoyerAffichage();
 	afficherAccueil();
 	char entree[100];
-	printf("Bonjour.\n");
-	printf("Pour tester, tapez 'test' \n");
-	printf("Pour jouer, tapez 'jeu'\n");
-	printf("Pour quitter, tapez 'quitter'");
-	demander(" : ", entree, 100);
+
+	demander("votre choix : ", entree, 100);
 	if(entree[0] == 't' || entree[0] == 'T') return 2;
 	else if(entree[0] == 'q' || entree[0] == 'Q') return 0;
 	else return 1;
@@ -98,7 +95,7 @@ void demanderTir(int tirsJoueur2[TAILLE][TAILLE], int bateauxJoueur1[TAILLE][TAI
 		valide = tir = 1;
 
 		// Demandes coordonees de tirs, formatage
-		initCoordonnee(0, 0, &entree);
+		initCoordonnee(&entree);
 		valide = demanderCoordonnee("Veuillez entrer les coordonnees de tir. \n ( exemple: A1 ou: i8 ) : ", &entree);
 		
 		// Verifications validite, possibilite, et sauvegarde si verfication reussies.
@@ -167,7 +164,7 @@ void demanderBateaux(int bateauxJoueur1[TAILLE][TAILLE], char* nom){
 		valide = placement = 1;
 		
 		// Demandes coordonees de bateaux, formatage
-		initCoordonnees(entrees, n);
+		initSuiteCoordonnees(entrees, n);
 
 		valide = nombre = demanderCoordonnees("Veuillez entrer les coordonnees de votre bateau. \n ( exemple: A2 D2 ou: h9 h8 h7 h6 ) : ", entrees, n);
 		
@@ -301,8 +298,8 @@ void testsJeu() {
 	
 	
 	printf("\n # FONCTION placerBateau()\n");
-	printf("Test : qu'un bateau est bien place.\n");
-	entrerCoordonneesEtReformatter(destroyer, liste, 2, 4);
+	printf("\nTest : qu'un bateau est bien place.\n");
+	initSuiteCoordonnees(liste, 2, destroyer);
 	placerBateau(liste, 4, bateaux);
 	assertEquals(bateaux[0][0], (int) BATEAU, "Test pour Destroyer(A0,A3) bateaux[0][0] == BATEAU");
 	assertEquals(bateaux[0][1], (int) BATEAU, "Test pour Destroyer(A0,A3) bateaux[0][1] == BATEAU");
@@ -311,8 +308,8 @@ void testsJeu() {
 	
 	destroyer[0] = "A0";
 	destroyer[1] = "D0";
-	printf("Test : qu'un bateau ne peut pas etre place sur un bateau existant\n");
-	entrerCoordonneesEtReformatter(destroyer, liste, 2, 4);
+	printf("\nTest : qu'un bateau ne peut pas etre place sur un bateau existant\n");
+	initSuiteCoordonnees(liste, 2, destroyer);
 	placerBateau(liste, 4, bateaux);
 	assertEquals(placerBateau(liste, 4, bateaux), 0, "Test placerBateau sur case occupee(A0,D0) == 0");
 	
@@ -320,14 +317,14 @@ void testsJeu() {
 	int tirs[TAILLE][TAILLE];
 	initialiserTableau(tirs);
 	Coordonnee c;
-	initCoordonnee(0, 0, &c);
+	initCoordonnee(&c);
 	assertEquals(placerTir(&c, tirs, bateaux), 1, "Test placerTir sur case non tiree A0 == 1");
-	initCoordonnee(0, 0, &c);
+	initCoordonnee(&c);
 	assertEquals(placerTir(&c, tirs, bateaux), 0, "Test placerTir sur case deja tiree A0 == 0");
 	
 	printf("\n # FONCTION verifierPresenceBateau()\n");
 	assertEquals(verifierPresenceBateau(&c, bateaux), 1, "Test presence bateau case pleine A0 == 1");
-	initCoordonnee(9, 9, &c);
+	initCoordonnee(&c, 9, 9);
 	assertEquals(verifierPresenceBateau(&c, bateaux), 0, "Test presence bateau case vide J9 == 0");
 	
 	printf("\n # FONCTION partieTerminee()\n");
@@ -346,20 +343,20 @@ void testsJeu() {
 	char* destroyer2[2];
 	destroyer2[0] = "A0";
 	destroyer2[1] = "A3";
-	entrerCoordonneesEtReformatter(destroyer2, liste2, 2, 4);
+	initSuiteCoordonnees(liste2, 2, destroyer2);
 	placerBateau(liste2, 4, bateaux);
 	
 	Coordonnee d, e, f, g, h;
-	initCoordonnee(2, 2, &d);
-	initCoordonnee(1, 2, &e);
-	initCoordonnee(9, 9, &f);
-	initCoordonnee(3, 2, &g);
-	initCoordonnee(0, 6, &h);
+	initCoordonnee(&d, 2, 2);
+	initCoordonnee(&e, 1, 2);
+	initCoordonnee(&f, 9, 9);
+	initCoordonnee(&g, 2, 2);
+	initCoordonnee(&h, 0, 5);
 	
 	assertEquals(superRadar(&d, bateaux), 2, "Test radar proche.");
 	assertEquals(superRadar(&e, bateaux), 1, "Test radar proche.");
 	assertEquals(superRadar(&f, bateaux), 0, "Test radar loin.");
-	assertEquals(superRadar(&g, bateaux), 3, "Test radar proche.");
-	assertEquals(superRadar(&h, bateaux), 3, "Test radar proche.");
+	assertEquals(superRadar(&g, bateaux), 2, "Test radar proche.");
+	assertEquals(superRadar(&h, bateaux), 2, "Test radar proche.");
 	
 }
