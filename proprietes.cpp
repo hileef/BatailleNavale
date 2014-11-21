@@ -28,8 +28,10 @@ Ce fichier contient les directives de preprocesseur communes aux proprietes du j
 #define SYS_VERSION 2
 // SYSTEME VERSION 2 -> DEPEDENCIES
 
-const int TAILLES[] = {0, 1, 2, 1, 1, 0};
-const int TAILLES_MAX = 6;
+const int TAILLES[] = {0, 1, 2, 1, 1, 0, 0, 0, 0, 0};
+const int TAILLES_MAX = TAILLE - 2;
+
+const bool RADAR_ACTIVE = true;
 
 // Sortie de la condition que ces directives n'ont pas deja etes lancees.
 #endif

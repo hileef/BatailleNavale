@@ -20,7 +20,6 @@ void pause();
 void debug(char* s);
 void afficher(char* s);
 void afficherAccueil();
-void afficherAccueil_v2();
 void afficherTableau(int tableau[TAILLE][TAILLE]);
 void afficherPlateau(Plateau* p);
 void demander(char* s, char* t, int n);

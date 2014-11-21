@@ -119,8 +119,9 @@ static void demanderTirAuJoueur(Partie* p, int joueur) {
 
 		nettoyerAffichage();
 		afficherPlateau(getTirs(p, joueur));
+		afficher("Amiral ");
 		afficher(getJoueur(p, joueur));
-		afficher(", c'est ton tour! \n");
+		afficher(", c'est votre tour! \n");
 		if(!tirValide) afficher("Coordonnees invalides. Recommence. \n");
 		if(!tirPlace) afficher("Tir fait auparavant. Recommence. \n");
 		afficher("Veuillez entrer les coordonnees de tir. \n ( exemple: A1 ou i8 )");
@@ -139,13 +140,13 @@ static void resultatsTirsJoueur(Partie* p, Coordonnee* tir, int joueur) {
 	int autreJoueur = (joueur == 1) ? 2: 1;
 	nettoyerAffichage();
 	afficherPlateau(getTirs(p,joueur));
-	if(getCase(getTirs(p,joueur), tir) == PLOUF) {
+	if(RADAR_ACTIVE && getCase(getTirs(p,joueur), tir) == PLOUF) {
 		int r = radar(getBateaux(p, autreJoueur), tir);
 		if(r > 0) {
 			afficher("Le radar a detecte un bateau dans un rayon de ");
 			intToString(conv, r);
 			afficher(conv);
-			afficher(" cases. \n");
+			afficher(" cases. (attention: detecte aussi les epaves)\n");
 		}
 	}
 
@@ -162,8 +163,9 @@ static void demanderBateauxAuJoueur(Partie* p, int joueur) {
 
 		nettoyerAffichage();
 		afficherPlateau(getBateaux(p, joueur));
+		afficher("Amiral ");
 		afficher(getJoueur(p, joueur));
-		afficher(", c'est ton tour! \n");
+		afficher(", c'est votre tour! \n");
 		afficherBateauxDisponibles();
 		if(!bateauValide) afficher("Coordonnees invalides. Recommence. \n");
 		if(!bateauAutorise) afficher("Bateau non disponible. Recommence. \n");
