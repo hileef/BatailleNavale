@@ -1,5 +1,11 @@
 #include "coordonnees.h"
 
+#include <stdio.h>
+#include <string.h>
+#include "unittest.h"
+#include "proprietes.cpp"
+#include "cli.h"
+
 // Les prototypes privés
 static bool validerCoordonnee(char y, char x, Coordonnee *c);
 static int sontAlignees(Coordonnee cible[], int nombre);
@@ -29,9 +35,9 @@ void initCoordonnee(Coordonnee* c, int i, int j) {
 	setY(c, i);
 	setX(c, j);
 }
-bool initCoordonnee(Coordonnee* c, char* entree) {
-	if(entree[0] != '\0' &&  entree[1] != '\0' && entree[2] == '\0')
-		return validerCoordonnee(entree[0], entree[1], c);
+bool initCoordonnee(Coordonnee* c, const char* texte) {
+	if(texte[0] != '\0' &&  texte[1] != '\0' && texte[2] == '\0')
+		return validerCoordonnee(texte[0], texte[1], c);
 	else return false;
 }
 
@@ -59,19 +65,6 @@ int initSuiteCoordonnees(Coordonnee cible[], int n, char** textes) {
 		return validerSuiteCoordonnees(cible, etendue);
 	else return validerSuiteCoordonnees(cible, n);
 }
-
-/*
-bool initSuiteCoordonnees(Coordonnee cible[], int nombre, char** textes) {
-	return entrerCoordonneesEtReformatter(texte, cible, nombre, 0);
-}
-*/
-
-
-
-
-
-
-
 
 static int validerSuiteCoordonnees(Coordonnee cible[], int nombre) {
 	int orientation = sontAlignees(cible, nombre);
@@ -199,73 +192,85 @@ static void etendreSuiteCoordonnees(Coordonnee cible[], int etendue) {
 
 
 void testsCoordonnees() {
-	printf("\n###################################");
-	printf("\n### *** FICHIER COORDONNEES *** ###\n");
+	Coordonnee c, k, l, m, n, liste[4];
+	char **entreesZ1, **entreesZ2;
+	int validite;
 
-	char* entrees[3];
-	entrees[0] = "B9";
-	entrees[1] = "A3";
-	entrees[2] = "C5";
+	allocSuperString(&entreesZ1, TAILLE_ENTREE);
+	allocSuperString(&entreesZ2, TAILLE_ENTREE);
+
+	afficher("\n###################################");
+	afficher("\n### *** FICHIER COORDONNEES *** ###\n");
+
+	afficher("\n # FONCTION initCoordonnee()\n");
 	
-	char* entrees2[2];
-	entrees2[0] = "A0";
-	entrees2[1] = "A3";
+	initCoordonnee(&c);
+	assertEquals(getY(&c), 0, "Coordonnee c.y = 0 ('A') ");
+	assertEquals(getX(&c), 0, "Coordonnee c.x = 0       ");
 
-	printf("\n # FONCTION initCoordonnee(5, 9)\n");
-	Coordonnee c;
+	afficher("\n # FONCTION initCoordonnee(5, 9)\n");
 	initCoordonnee(&c, 5, 9);
-	assertEquals(getY(&c), 5, "Test Coordonnee c.setY(5");
-	assertEquals(getX(&c), 9, "Test Coordonnee c.x = 9");
-	
-	printf("\n # FONCTION initSuiteCoordonnees(2, 1)\n");
-	Coordonnee liste[4];
-	initSuiteCoordonnees(liste, 3, 2, 1);
-	assertEquals(getY(&liste[0]), 2, "Test Coordonnee liste[0].y = 2");
-	assertEquals(getX(&liste[0]), 1, "Test Coordonnee liste[0].x = 1");
-	assertEquals(getY(&liste[1]), 2, "Test Coordonnee liste[1].y = 2");
-	assertEquals(getX(&liste[1]), 1, "Test Coordonnee liste[1].x = 1");
-	assertEquals(getY(&liste[2]), 2, "Test Coordonnee liste[2].y = 2");
-	assertEquals(getX(&liste[2]), 1, "Test Coordonnee liste[2].x = 1");
-	
-	printf("\n # FONCTION initCoordonnee()\n");
+	assertEquals(getY(&c), 5, "Coordonnee c.y = 5 ('F') ");
+	assertEquals(getX(&c), 9, "Coordonnee c.x = 9       ");
+
+	afficher("\n # FONCTION initCoordonnee('B9')\n");
 	initCoordonnee(&c, "B9");
-	assertEquals(getY(&c), 1, "Test Coordonnee c.setY(1 ('B')");
-	assertEquals(getX(&c), 9, "Test Coordonnee c.setX(9");
+	assertEquals(getY(&c), 1, "Coordonnee c.y = 1 ('B') ");
+	assertEquals(getX(&c), 9, "Coordonnee c.x = 9       ");
 	
-	printf("\n # FONCTION initSuiteCoordonnees()\n");
-	initSuiteCoordonnees(liste, 3, entrees);
-	assertEquals(getY(&liste[0]), 1, "Test Coordonnee liste[0].y = 1 ('B')");
-	assertEquals(getX(&liste[0]), 9, "Test Coordonnee liste[0].x = 9");
-	assertEquals(getY(&liste[1]), 0, "Test Coordonnee liste[1].y = 0 ('A')");
-	assertEquals(getX(&liste[1]), 3, "Test Coordonnee liste[1].x = 3");
-	assertEquals(getY(&liste[2]), 2, "Test Coordonnee liste[2].y = 2 ('C')");
-	assertEquals(getX(&liste[2]), 5, "Test Coordonnee liste[2].x = 5");
+	afficher("\n # FONCTION initSuiteCoordonnees(2, 1)\n");
+
+	initSuiteCoordonnees(liste, 3, 2, 1);
+	assertEquals(getY(&liste[0]), 2, "Coordonnee liste[0].y = 2 ('C') ");
+	assertEquals(getX(&liste[0]), 1, "Coordonnee liste[0].x = 1       ");
+	assertEquals(getY(&liste[1]), 2, "Coordonnee liste[1].y = 2 ('C') ");
+	assertEquals(getX(&liste[1]), 1, "Coordonnee liste[1].x = 1       ");
+	assertEquals(getY(&liste[2]), 2, "Coordonnee liste[2].y = 2 ('C') ");
+	assertEquals(getX(&liste[2]), 1, "Coordonnee liste[2].x = 1       ");
 	
-	printf("\n # FONCTION etendreSuiteCoordonnees()\n");
-	Coordonnee k, l, m, n;
+
+
+	split("B9 A3 C5", entreesZ1, 3);
+	split("A0 A3", entreesZ2, 2);
+	
+	afficher("\n # FONCTION initSuiteCoordonnees(['B9', 'A3', 'C5'])\n");
+	validite = initSuiteCoordonnees(liste, 3, entreesZ1);
+	assertEquals(getY(&liste[0]), 1, "Coordonnee liste[0].y = 1 ('B') ");
+	assertEquals(getX(&liste[0]), 9, "Coordonnee liste[0].x = 9       ");
+	assertEquals(getY(&liste[1]), 0, "Coordonnee liste[1].y = 0 ('A') ");
+	assertEquals(getX(&liste[1]), 3, "Coordonnee liste[1].x = 3       ");
+	assertEquals(getY(&liste[2]), 2, "Coordonnee liste[2].y = 2 ('C') ");
+	assertEquals(getX(&liste[2]), 5, "Coordonnee liste[2].x = 5       ");
+	assertEquals(validite, 0, "Liste de coordonnees non valide.");
+	
+	afficher("\n # FONCTION etendreSuiteCoordonnees(['A0','A3','',''])\n");
 	initCoordonnee(&k, 0, 0);
 	initCoordonnee(&l, 0, 3);
 	liste[0] = k;
 	liste[1] = l;
 	etendreSuiteCoordonnees(liste, 4);
-	assertEquals(getY(&liste[0]), 0, "Test Coordonnee liste[0].y = 0 ('A')");
-	assertEquals(getX(&liste[0]), 0, "Test Coordonnee liste[0].x = 0");
-	assertEquals(getY(&liste[1]), 0, "Test Coordonnee liste[1].y = 0 ('A')");
-	assertEquals(getX(&liste[1]), 1, "Test Coordonnee liste[1].x = 1");
-	assertEquals(getY(&liste[2]), 0, "Test Coordonnee liste[2].y = 0 ('A')");
-	assertEquals(getX(&liste[2]), 2, "Test Coordonnee liste[2].x = 2");
-	assertEquals(getY(&liste[3]), 0, "Test Coordonnee liste[2].y = 0 ('A')");
-	assertEquals(getX(&liste[3]), 3, "Test Coordonnee liste[2].x = 3");
+	assertEquals(getY(&liste[0]), 0, "Coordonnee liste[0].y = 0 ('A') ");
+	assertEquals(getX(&liste[0]), 0, "Coordonnee liste[0].x = 0       ");
+	assertEquals(getY(&liste[1]), 0, "Coordonnee liste[1].y = 0 ('A') ");
+	assertEquals(getX(&liste[1]), 1, "Coordonnee liste[1].x = 1       ");
+	assertEquals(getY(&liste[2]), 0, "Coordonnee liste[2].y = 0 ('A') ");
+	assertEquals(getX(&liste[2]), 2, "Coordonnee liste[2].x = 2       ");
+	assertEquals(getY(&liste[3]), 0, "Coordonnee liste[2].y = 0 ('A') ");
+	assertEquals(getX(&liste[3]), 3, "Coordonnee liste[2].x = 3       ");
 
-	printf("\n # FONCTION initSuiteCoordonnees()\n");
-	initSuiteCoordonnees(liste, 2, entrees2);
-	assertEquals(getY(&liste[0]), 0, "Test Coordonnee liste[0].y = 0 ('A')");
-	assertEquals(getX(&liste[0]), 0, "Test Coordonnee liste[0].x = 0");
-	assertEquals(getY(&liste[1]), 0, "Test Coordonnee liste[1].y = 0 ('A')");
-	assertEquals(getX(&liste[1]), 1, "Test Coordonnee liste[1].x = 1");
-	assertEquals(getY(&liste[2]), 0, "Test Coordonnee liste[2].y = 0 ('A')");
-	assertEquals(getX(&liste[2]), 2, "Test Coordonnee liste[2].x = 2");
-	assertEquals(getY(&liste[3]), 0, "Test Coordonnee liste[2].y = 0 ('A')");
-	assertEquals(getX(&liste[3]), 3, "Test Coordonnee liste[2].x = 3");
+	afficher("\n # FONCTION initSuiteCoordonnees(['A0','A3','',''])\n");
+	validite = initSuiteCoordonnees(liste, 2, entreesZ2);
+	assertEquals(getY(&liste[0]), 0, "Coordonnee liste[0].y = 0 ('A') ");
+	assertEquals(getX(&liste[0]), 0, "Coordonnee liste[0].x = 0       ");
+	assertEquals(getY(&liste[1]), 0, "Coordonnee liste[1].y = 0 ('A') ");
+	assertEquals(getX(&liste[1]), 1, "Coordonnee liste[1].x = 1       ");
+	assertEquals(getY(&liste[2]), 0, "Coordonnee liste[2].y = 0 ('A') ");
+	assertEquals(getX(&liste[2]), 2, "Coordonnee liste[2].x = 2       ");
+	assertEquals(getY(&liste[3]), 0, "Coordonnee liste[2].y = 0 ('A') ");
+	assertEquals(getX(&liste[3]), 3, "Coordonnee liste[2].x = 3       ");
+	assertEquals(validite, 4, "Liste de coordonnees valide.");
 	
+
+	freeSuperString(&entreesZ1, TAILLE_ENTREE);
+	freeSuperString(&entreesZ2, TAILLE_ENTREE);
 }

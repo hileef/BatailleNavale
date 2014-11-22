@@ -3,7 +3,6 @@
 
 #include "plateau.h"
 
-typedef struct Partie Partie;
 struct Partie {
 	Plateau bateaux1;
 	Plateau bateaux2;
@@ -12,7 +11,9 @@ struct Partie {
 	char joueur1[TAILLE_ENTREE];
 	char joueur2[TAILLE_ENTREE];
 };
+typedef struct Partie Partie;
 
 void jouerPartie(Partie* p);
+void testsPartie();
 
 #endif

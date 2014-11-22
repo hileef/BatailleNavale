@@ -13,23 +13,32 @@ c'est a dire (recuperation d'informations et affichage, entrees & sorties).
 #include <string.h>
 #include "coordonnees.h"
 #include "proprietes.cpp"
-#include "plateau.h"
 
 // Les prorotypes publics
-void pause();
-void debug(char* s);
-void afficher(char* s);
-void afficherAccueil();
-void afficherTableau(int tableau[TAILLE][TAILLE]);
-void afficherPlateau(Plateau* p);
-void demander(char* s, char* t, int n);
-void demander(char* s, char* t);
-void nettoyerAffichage();
-void couleur(int x);
-char lettreDeChiffre(int x);
-int demanderCoordonnee(char* s, Coordonnee* cible);
-int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax);
-void intToString(char* s, int x);
-void afficherBateauxDisponibles();
+
+
+
+void 	pause();
+void 	debug(const char* s);
+
+void 	nettoyerAffichage();
+void 	couleur(int x);
+
+void 	afficher(const char* s);
+void 	afficherAccueil();
+
+void 	demander(const char* s, char* t, int n);
+void 	demander(const char* s, char* t);
+
+int 	demanderCoordonnee(const char* s, Coordonnee* cible);
+int 	demanderCoordonnees(const char* s, Coordonnee cible[], int tailleMax);
+
+void 	split(const char* s, char** cible, int taille);
+void	allocSuperString(char*** t, int squared);
+void	freeSuperString(char*** t, int squared);
+
+void 	intToString(char* s, int x);
+void 	charToString(char* s, char x);
+char 	lettreDeChiffre(int x);
 
 #endif

@@ -5,18 +5,22 @@
 static void demanderBateauxAuJoueur(Partie* p, int joueur);
 static void demanderTirAuJoueur(Partie* p, int joueur);
 static void resultatsTirsJoueur(Partie* p, Coordonnee* tir, int joueur);
+
 static bool tourJoueur(Partie* p, int joueur);
-static int jouerTours(Partie* p);
+static int  jouerTours(Partie* p);
+
 static void gagnerPartie(Partie* p, int gagnant);
-static void fermerPartie(Partie* p);
+
 static void preparerPartie(Partie* p);
-static void fermerPlateaux(Partie* p);
+static void fermerPartie(Partie* p);
+
 static void preparerPlateaux(Partie* p);
+static void fermerPlateaux(Partie* p);
 
 // Protypes privés : acces proprietes
 static Plateau* getBateaux(Partie* p, int joueur);
 static Plateau* getTirs(Partie* p, int joueur);
-static char* getJoueur(Partie* p, int joueur);
+static char* 	getJoueur(Partie* p, int joueur);
 
 // Protypes privés : traduction fonction externes
 static bool tousBateauxTouches(Partie* p, int joueur);
@@ -166,7 +170,7 @@ static void demanderBateauxAuJoueur(Partie* p, int joueur) {
 		afficher("Amiral ");
 		afficher(getJoueur(p, joueur));
 		afficher(", c'est votre tour! \n");
-		afficherBateauxDisponibles();
+		afficherBateauxDisponibles(getBateaux(p, joueur));
 		if(!bateauValide) afficher("Coordonnees invalides. Recommence. \n");
 		if(!bateauAutorise) afficher("Bateau non disponible. Recommence. \n");
 		if(!bateauPlace) afficher("Placement impossible. Recommence. \n");
@@ -187,4 +191,7 @@ static void demanderBateauxAuJoueur(Partie* p, int joueur) {
 
 }
 
+void testsPartie() {
+
+}
 

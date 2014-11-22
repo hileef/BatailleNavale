@@ -1,10 +1,10 @@
+#include "coordonnees.h"
 #include "proprietes.cpp"
 #include "systeme.h"
 #include "partie.h"
 #include "cli.h"
 
 static void tests();
-static void options();
 static char accueil();
 
 int amorce() {
@@ -24,7 +24,15 @@ int amorce() {
 }
 
 static void tests() {
-	;
+	couleur(3);
+	nettoyerAffichage();
+	testsCoordonnees();
+	testsPlateau();
+	testsBateaux();
+	testsPartie();
+	pause();
+	couleur(0);
+
 }
 
 static char accueil() {

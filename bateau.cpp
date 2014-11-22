@@ -2,14 +2,15 @@
 #include "bateau.h"
 #include "coordonnees.h"
 #include "plateau.h"
-#include <stdio.h>
+#include "cli.h"
+#include <stdlib.h>
 
 // Les prototypes privés
 static void detruireBateau(Bateau* b);
 static Bateau* creerBateau(Coordonnee liste[], int taille);
 static bool bateauContient(Bateau* b, Coordonnee* x);
 static void toucherBateau(Bateau* b, Plateau* tirs);
-static void ajouterBateau(BateauManager* m, Bateau* b);
+static void ajouterBateau(BateauMGR* m, Bateau* b);
 
 // #####################################
 
@@ -46,25 +47,25 @@ Coordonnee* getCoordonnee(Bateau* b, int i) {
 void setCoordonnee(Bateau* b, int i, Coordonnee* x) {
 	b->liste[i] = *x;
 }
-Bateau* getPremier(BateauManager* m) {
+Bateau* getPremier(BateauMGR* m) {
 	return m->premier;
 }
-Bateau* getDernier(BateauManager* m) {
+Bateau* getDernier(BateauMGR* m) {
 	return m->dernier;
 }
-void setPremier(BateauManager* m, Bateau* b) {
+void setPremier(BateauMGR* m, Bateau* b) {
 	m->premier = b;
 }
-void setDernier(BateauManager* m, Bateau* b) {
+void setDernier(BateauMGR* m, Bateau* b) {
 	m->dernier = b;
 }
-int getCompteur(BateauManager* m, int i) {
+int getCompteur(BateauMGR* m, int i) {
 	return m->compteurs[i];
 }
-void setCompteur(BateauManager* m, int i, int x) {
+void setCompteur(BateauMGR* m, int i, int x) {
 	m->compteurs[i] = x;
 }
-void incCompteur(BateauManager* m, int i) {
+void incCompteur(BateauMGR* m, int i) {
 	setCompteur(m, i, getCompteur(m, i) + 1);
 }
 
@@ -77,18 +78,39 @@ int totalBateauxAutorises() {
 	return x;
 }
 
-bool bateauAutorise(BateauManager* m, int taille) {
-	return (getCompteur(m, taille - 1) < TAILLES[taille - 1]);
+bool bateauAutorise(BateauMGR* m, int taille) {
+	return bateauxRestantsAutorises(m, taille) > 0;
 }
 
-void allouerManager(BateauManager* m){
+int bateauxRestantsAutorises(BateauMGR* m, int taille) {
+	return TAILLES[taille - 1] - getCompteur(m, taille - 1);
+}
+
+void afficherBateauxRestantsAutorises(BateauMGR* m) {
+	int i, x;
+	char conv[3];
+	afficher("Vous pouvez placer :\n");
+	for(i = 0; i < TAILLES_MAX; i++)
+		if((x = bateauxRestantsAutorises(m, i)) > 0) {
+			// printf("%d bateaux de : %d cases \n", TAILLES[i], i + 1);
+			intToString(conv, x);
+			afficher(" - ");
+			afficher(conv);
+			afficher(" bateaux de : ");
+			intToString(conv, i);
+			afficher(conv);
+			afficher(" cases.\n");
+		}
+}
+
+void allouerManager(BateauMGR* m){
 	int i;
 	for(i = 0; i < TAILLES_MAX; i++)
 		setCompteur(m, i, 0);
 	setPremier(m, NULL);
 	setDernier(m, NULL);
 }
-void detruireManager(BateauManager* m){
+void detruireManager(BateauMGR* m){
 	Bateau *b, *suivant = getPremier(m);
 	while((b = suivant) != NULL) {
 		suivant = getSuivant(b);
@@ -118,7 +140,7 @@ static Bateau* creerBateau(Coordonnee liste[], int taille) {
 	return b;
 }
 
-Bateau* trouverBateau(BateauManager* m, Coordonnee* x){
+Bateau* trouverBateau(BateauMGR* m, Coordonnee* x){
 	Bateau *b, *suivant = getPremier(m);
 	while((b = suivant) != NULL) {
 		suivant = getSuivant(b);
@@ -141,7 +163,7 @@ bool toucherBateau(Bateau* b) {
 	return (getTouches(b) == getTaille(b));
 }
 
-static void ajouterBateau(BateauManager* m, Bateau* b) {
+static void ajouterBateau(BateauMGR* m, Bateau* b) {
 	if(getPremier(m) == NULL) {
 		setPremier(m, b);
 		setDernier(m, b);
@@ -153,19 +175,21 @@ static void ajouterBateau(BateauManager* m, Bateau* b) {
 	}
 }
 
-void enregistrerBateau(BateauManager* m, Coordonnee liste[], int taille) {
+void enregistrerBateau(BateauMGR* m, Coordonnee liste[], int taille) {
 	ajouterBateau(m, creerBateau(liste, taille));
 	incCompteur(m, taille - 1);
 }
 
-bool enregistrerTir(BateauManager* m, Coordonnee* tir) {
+bool enregistrerTir(BateauMGR* m, Coordonnee* tir) {
 	Bateau* b;
 	if((b = trouverBateau(m, tir)) != NULL) 
 		return toucherBateau(b);
 	return false;
 }
 
+void testsBateaux() {
 
+}
 
 
 

@@ -7,24 +7,22 @@ c'est a dire (recuperation d'informations et affichage, entrees & sorties).
 
 // Directives de preprocesseur
 #include "cli.h"
-#include "plateau.h"
 
 // Les prorotypes prives
 static void glup(char* t, int n);
 static void vidange();
-static void tokky(char* s, char** cible, int length);
+static void tokky(const char* s, char** cible, int length);
 static int compterEspaces(char* s);
-static void split(char* s, char** cible, int taille);
 
 
 
-int demanderCoordonnee(char* s, Coordonnee* cible) {
-	char texte[100];
-	demander(s, texte, 100);
+int demanderCoordonnee(const char* s, Coordonnee* cible) {
+	char texte[TAILLE_ENTREE];
+	demander(s, texte, TAILLE_ENTREE);
 	return initCoordonnee(cible, texte);
 }
 
-int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
+int demanderCoordonnees(const char* s, Coordonnee cible[], int tailleMax) {
 	int i, n, x;
 	char entree[100];
 
@@ -35,7 +33,7 @@ int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
 	char **splitte;
 	splitte = (char**) malloc(sizeof(char*) * n);
 	for(i = 0; i < n; i++)
-		splitte[i] = (char*) malloc(sizeof(char) * 100);
+		splitte[i] = (char*) malloc(sizeof(char) * TAILLE_ENTREE);
 
 	split(entree, splitte, n);
 
@@ -50,19 +48,19 @@ int demanderCoordonnees(char* s, Coordonnee cible[], int tailleMax) {
 
 // DEMANDER 
 // equivalent de scanf, mais passe par fgets pour plus de securite.
-void demander(char* s, char* t) {
+void demander(const char* s, char* t) {
 	demander(s, t, TAILLE_ENTREE);
 }
-void demander(char* s, char* t, int n) {
+void demander(const char* s, char* t, int n) {
 	printf("%s", s);
 	glup(t, n);
 }
 
-void afficher(char* s) {
+void afficher(const char* s) {
 	printf("%s", s);
 }
 
-void debug(char* s) {
+void debug(const char* s) {
 	printf("DEBUG : %s \n", s);
 }
 
@@ -78,49 +76,6 @@ void nettoyerAffichage() {
 	printf("              #### SUPER BATAILLE NAVALE :D #### \n\n");
 }
 
-// AFFICHER TABLEAU
-// Affiche un tableau a deux dimensions de taille TAILLExTAILLE
-// a la console.
-void afficherTableau(int tableau[TAILLE][TAILLE]) {
-	int i, j;
-
-	printf("    ");
-	for(i = 0; i < TAILLE; i++)
-		printf(" %d ", i);
-	printf("\n    ");
-	for(i = 0; i < TAILLE; i++)
-		printf("   ");
-	printf("\n");
-	for(i = 0; i < TAILLE; i++) {
-		printf(" %c  ", lettreDeChiffre(i));
-		for(j = 0; j < TAILLE; j++)
-			printf(" %c ", tableau[i][j]);
-		printf("\n\n");
-	}
-
-	printf("\n");
-}
-
-void afficherPlateau(Plateau* p) {
-	int i, j, taille = p->taille;
-
-	printf("    ");
-	for(i = 0; i < taille; i++)
-		printf(" %d ", i);
-	printf("\n    ");
-	for(i = 0; i < taille; i++)
-		printf("   ");
-	printf("\n");
-	for(i = 0; i < taille; i++) {
-		printf(" %c  ", lettreDeChiffre(i));
-		for(j = 0; j < taille; j++)
-			printf(" %c ", getCase(p, i, j));
-		printf("\n\n");
-	}
-
-	printf("\n");
-}
-
 // Conversion entre 'A' et son equivalent selon l'encodage
 char lettreDeChiffre(int x) {
 	return ('A' + x);
@@ -131,6 +86,9 @@ int chiffreDeLettre(char x) {
 
 void intToString(char* s, int x) {
 	sprintf(s, "%d", x);
+}
+void charToString(char* s, char x) {
+	sprintf(s, "%c", x);
 }
 
 
@@ -150,10 +108,24 @@ static void vidange() {
 
 // PROBLEMS TO FIX HERE : STD FUNCTION FAILS,
 // MY FUNCTION BETTER BUT TO SIMPLIFY
-static void split(char* s, char** cible, int taille) {
-	int i, length;
+void split(const char* s, char** cible, int taille) {
 	tokky(s, cible, taille);
 }
+
+void allocSuperString(char*** t, int squared) {
+	int i;
+	*t = (char**) malloc(sizeof(char*) * squared);
+	for(i = 0; i < squared; i++)
+		(*t)[i] = (char*) malloc(sizeof(char) * squared);
+}
+
+void freeSuperString(char*** t, int squared) {
+	int i;
+	for(i = 0; i < squared; i++)
+		free((*t)[i]);
+	free(*t);
+}
+
 
 // PRIVe ** compterEspaces
 // Compte le nombre d'espaces trouves dans un string
@@ -165,7 +137,7 @@ static int compterEspaces(char* s) {
 }
 
 // new version of EUStringToStringTable, replaced to tokky
-static void tokky(char* s, char** cible, int length) {
+static void tokky(const char* s, char** cible, int length) {
 	int i, j, k, l, m, n, N;
 	
 	i = j = k = l = m = n = 0;
@@ -222,16 +194,6 @@ void afficherAccueil() {
 	printf("Pour tester, tapez 'test' \n");
 	printf("Pour jouer, tapez 'jeu'\n");
 	printf("Pour quitter, tapez 'quitter' \n");
-}
-
-
-void afficherBateauxDisponibles() {
-	int i;
-	printf("Vous pouvez placer :\n");
-	for(i = 0; i < TAILLES_MAX; i++)
-		if(TAILLES[i] > 0)
-			printf("%d bateaux de : %d cases \n", TAILLES[i], i + 1);
-	
 }
 
 void pause() {

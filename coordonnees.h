@@ -1,32 +1,29 @@
 #ifndef COORDONNEES
 #define COORDONNEES
 
-#include <stdio.h>
-#include <string.h>
-#include "unittest.h"
-#include "proprietes.cpp"
-
 struct Coordonnee {
 	int y;
 	int x;
 };
 typedef struct Coordonnee Coordonnee;
 
-void setY(Coordonnee* c, int y);
-void setX(Coordonnee* c, int x);
-int getY(Coordonnee* c);
-int getX(Coordonnee* c);
+void	setY(Coordonnee* c, int y);
+void	setX(Coordonnee* c, int x);
+int 	getY(Coordonnee* c);
+int 	getX(Coordonnee* c);
 
-bool egal(Coordonnee* a, Coordonnee* b);
+bool 	egal(Coordonnee* a, Coordonnee* b);
 
-void initCoordonnee(Coordonnee* c);
-void initCoordonnee(Coordonnee* c, int i, int j);
-bool initCoordonnee(Coordonnee* c, char* texte);
+void 	initCoordonnee(Coordonnee* c);
+void 	initCoordonnee(Coordonnee* c, int i, int j);
+bool 	initCoordonnee(Coordonnee* c, const char* texte);
 
-int initSuiteCoordonnees(Coordonnee cible[], int n);
-int initSuiteCoordonnees(Coordonnee cible[], int n, int i, int j);
-int initSuiteCoordonnees(Coordonnee cible[], int n, char** textes);
+int 	initSuiteCoordonnees(Coordonnee cible[], int n);
+int 	initSuiteCoordonnees(Coordonnee cible[], int n, int i, int j);
+int 	initSuiteCoordonnees(Coordonnee cible[], int n, char** textes);
 
-void testsCoordonnees();
+
+
+void 	testsCoordonnees();
 
 #endif
