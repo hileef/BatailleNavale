@@ -6,6 +6,7 @@
 
 
 int amorce() {
+	couleur(0);
 	char choix;
 	while(true){
 		choix = accueil();
