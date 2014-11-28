@@ -3,16 +3,8 @@
 #include "coordonnees.h"
 #include "plateau.h"
 #include "cli.h"
+#include "unittest.h"
 #include <stdlib.h>
-
-// Les prototypes privés
-static void detruireBateau(Bateau* b);
-static Bateau* creerBateau(Coordonnee liste[], int taille);
-static bool bateauContient(Bateau* b, Coordonnee* x);
-static void toucherBateau(Bateau* b, Plateau* tirs);
-static void ajouterBateau(BateauMGR* m, Bateau* b);
-
-// #####################################
 
 int getTaille(Bateau* b) {
 	return b->taille;
@@ -88,18 +80,12 @@ int bateauxRestantsAutorises(BateauMGR* m, int taille) {
 
 void afficherBateauxRestantsAutorises(BateauMGR* m) {
 	int i, x;
-	char conv[3];
 	afficher("Vous pouvez placer :\n");
 	for(i = 0; i < TAILLES_MAX; i++)
 		if((x = bateauxRestantsAutorises(m, i)) > 0) {
 			// printf("%d bateaux de : %d cases \n", TAILLES[i], i + 1);
-			intToString(conv, x);
-			afficher(" - ");
-			afficher(conv);
-			afficher(" bateaux de : ");
-			intToString(conv, i);
-			afficher(conv);
-			afficher(" cases.\n");
+			afficher(" - ", x);
+			afficher(" bateaux de : ", i, " cases.\n");
 		}
 }
 
@@ -189,6 +175,45 @@ bool enregistrerTir(BateauMGR* m, Coordonnee* tir) {
 
 void testsBateaux() {
 
+	char **texte;
+	allocSuperString(&texte, TAILLE_ENTREE);
+
+	split("A0 A2", texte, 2);
+	split("B0 B4", texte, 2);
+
+	Coordonnee liste[10];
+	initSuiteCoordonnees(liste, 2, texte);
+	freeSuperString(&texte,TAILLE_ENTREE);
+
+	Bateau *b = creerBateau(liste, 3);
+	Bateau *b2 = creerBateau(liste, 5);
+
+	afficher("\n###############################");
+	afficher("\n### *** FICHIER BATEAU *** ###\n");
+
+	afficher("\n # FONCTION getTaille()\n");
+	assertEquals(getTaille(b), 3, "Bateau de taille 3 ");
+	assertEquals(getTaille(b2), 5, "Bateau de taille 5 ");
+
+	afficher("\n # FONCTION setTaille()\n");
+	setTaille(b, 3);
+	assertEquals(getTaille(b), 3, "taille = 3");
+	setTaille(b, 5);
+	assertEquals(getTaille(b), 5, "taille = 5");
+
+	afficher("\n # FONCTION getTouche()\n");
+	BateauMGR MonBateauMGR;
+	BateauMGR *mgr = &MonBateauMGR;
+	Bateau *MonBateau = creerBateau(liste, 3);
+	allouerManager(mgr);
+	ajouterBateau(mgr, MonBateau);
+	Coordonnee t;
+	Coordonnee *tir = &t;
+	initCoordonnee(tir,"B1");
+	enregistrerTir(mgr, tir);
+	assertEquals(getTouches(MonBateau), 1,"Bateau touche a la case 'B1' ");
+
+	detruireManager(mgr);
 }
 
 

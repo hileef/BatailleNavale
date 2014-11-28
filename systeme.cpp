@@ -4,8 +4,6 @@
 #include "partie.h"
 #include "cli.h"
 
-static void tests();
-static char accueil();
 
 int amorce() {
 	char choix;

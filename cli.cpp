@@ -8,14 +8,6 @@ c'est a dire (recuperation d'informations et affichage, entrees & sorties).
 // Directives de preprocesseur
 #include "cli.h"
 
-// Les prorotypes prives
-static void glup(char* t, int n);
-static void vidange();
-static void tokky(const char* s, char** cible, int length);
-static int compterEspaces(char* s);
-
-
-
 int demanderCoordonnee(const char* s, Coordonnee* cible) {
 	char texte[TAILLE_ENTREE];
 	demander(s, texte, TAILLE_ENTREE);
@@ -56,9 +48,41 @@ void demander(const char* s, char* t, int n) {
 	glup(t, n);
 }
 
+void afficher(const char* s, const char* t, const char* u) {
+	afficher(s, t);
+	afficher(u);
+} 
+void afficher(const char* s, char c, const char* t) {
+	afficher(s, c);
+	afficher(t);
+}
+void afficher(const char* s, int x, const char* t) {
+	afficher(s, x);
+	afficher(t);
+} 
+void afficher(const char* s, const char* t) {
+	afficher(s);
+	afficher(t);
+}
+void afficher(const char* s, char c) {
+	afficher(s);
+	afficher(c);
+}
+void afficher(const char* s, int x) {
+	afficher(s);
+	afficher(x);
+}
+void afficher(char c) {
+	printf("%c", c);
+}
 void afficher(const char* s) {
 	printf("%s", s);
 }
+void afficher(int x) {
+	printf("%d", x);
+}
+
+
 
 void debug(const char* s) {
 	printf("DEBUG : %s \n", s);

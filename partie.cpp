@@ -1,33 +1,6 @@
 #include "partie.h"
 #include "cli.h"
 
-// Les prototypes privés
-static void demanderBateauxAuJoueur(Partie* p, int joueur);
-static void demanderTirAuJoueur(Partie* p, int joueur);
-static void resultatsTirsJoueur(Partie* p, Coordonnee* tir, int joueur);
-
-static bool tourJoueur(Partie* p, int joueur);
-static int  jouerTours(Partie* p);
-
-static void gagnerPartie(Partie* p, int gagnant);
-
-static void preparerPartie(Partie* p);
-static void fermerPartie(Partie* p);
-
-static void preparerPlateaux(Partie* p);
-static void fermerPlateaux(Partie* p);
-
-// Protypes privés : acces proprietes
-static Plateau* getBateaux(Partie* p, int joueur);
-static Plateau* getTirs(Partie* p, int joueur);
-static char* 	getJoueur(Partie* p, int joueur);
-
-// Protypes privés : traduction fonction externes
-static bool tousBateauxTouches(Partie* p, int joueur);
-static bool placerTir(Partie* p, int joueur, Coordonnee* tir);
-
-// #####################################
-
 static Plateau* getBateaux(Partie* p, int joueur) {
 	return (joueur == 1) ? &p->bateaux1: &p->bateaux2;
 }
@@ -47,6 +20,8 @@ static bool placerTir(Partie* p, int joueur, Coordonnee* tir) {
 	int autreJoueur = (joueur == 1) ? 2: 1;
 	return placerTir(getBateaux(p, autreJoueur), getTirs(p, joueur), tir);
 }
+
+// #####################################
 
 void jouerPartie(Partie* p) {
 	preparerPartie(p);
@@ -95,9 +70,7 @@ static void fermerPartie(Partie* p) {
 
 static void gagnerPartie(Partie* p, int gagnant) {
 	nettoyerAffichage();
-	afficher("\n\n BRAVO, ");
-	afficher(getJoueur(p, gagnant));
-	afficher("\n\n YOU'RE THE WINNER!! \n\n");
+	afficher("\n\n BRAVO, ", getJoueur(p, gagnant), "\n\n YOU'RE THE WINNER!! \n\n");
 	pause();
 }
 
@@ -123,9 +96,7 @@ static void demanderTirAuJoueur(Partie* p, int joueur) {
 
 		nettoyerAffichage();
 		afficherPlateau(getTirs(p, joueur));
-		afficher("Amiral ");
-		afficher(getJoueur(p, joueur));
-		afficher(", c'est votre tour! \n");
+		afficher("Amiral ", getJoueur(p, joueur), ", c'est votre tour! \n");
 		if(!tirValide) afficher("Coordonnees invalides. Recommence. \n");
 		if(!tirPlace) afficher("Tir fait auparavant. Recommence. \n");
 		afficher("Veuillez entrer les coordonnees de tir. \n ( exemple: A1 ou i8 )");
@@ -140,18 +111,13 @@ static void demanderTirAuJoueur(Partie* p, int joueur) {
 }
 
 static void resultatsTirsJoueur(Partie* p, Coordonnee* tir, int joueur) {
-	char conv[2];
 	int autreJoueur = (joueur == 1) ? 2: 1;
 	nettoyerAffichage();
 	afficherPlateau(getTirs(p,joueur));
 	if(RADAR_ACTIVE && getCase(getTirs(p,joueur), tir) == PLOUF) {
 		int r = radar(getBateaux(p, autreJoueur), tir);
-		if(r > 0) {
-			afficher("Le radar a detecte un bateau dans un rayon de ");
-			intToString(conv, r);
-			afficher(conv);
-			afficher(" cases. (attention: detecte aussi les epaves)\n");
-		}
+		if(r > 0) 
+			afficher("Le radar a detecte un bateau dans un rayon de ", r, " cases. (attention: detecte aussi les epaves)\n");
 	}
 
 	pause();
@@ -167,10 +133,9 @@ static void demanderBateauxAuJoueur(Partie* p, int joueur) {
 
 		nettoyerAffichage();
 		afficherPlateau(getBateaux(p, joueur));
-		afficher("Amiral ");
-		afficher(getJoueur(p, joueur));
-		afficher(", c'est votre tour! \n");
+		afficher("Amiral ", getJoueur(p, joueur), ", c'est votre tour! \n");
 		afficherBateauxDisponibles(getBateaux(p, joueur));
+
 		if(!bateauValide) afficher("Coordonnees invalides. Recommence. \n");
 		if(!bateauAutorise) afficher("Bateau non disponible. Recommence. \n");
 		if(!bateauPlace) afficher("Placement impossible. Recommence. \n");

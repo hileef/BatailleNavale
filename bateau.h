@@ -58,8 +58,14 @@ int 	totalBateauxAutorises();
 
 bool 	enregistrerTir(BateauMGR* m, Coordonnee* tir);
 
+// Les prototypes privés
+static void 	detruireBateau(Bateau* b);
+static Bateau* 	creerBateau(Coordonnee liste[], int taille);
+static bool 	bateauContient(Bateau* b, Coordonnee* x);
+static bool 	toucherBateau(Bateau* b);
+static void 	ajouterBateau(BateauMGR* m, Bateau* b);
 
-
+// Les tests
 void 	testsBateaux();
 
 #endif

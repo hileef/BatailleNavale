@@ -6,17 +6,6 @@
 #include "proprietes.cpp"
 #include "cli.h"
 
-// Les prototypes privés
-static bool validerCoordonnee(char y, char x, Coordonnee *c);
-static int sontAlignees(Coordonnee cible[], int nombre);
-static int sontALaSuite(Coordonnee cible[], int nombre, int orientation);
-static int validerSuiteCoordonnees(Coordonnee cible[], int nombre);
-
-static int etendueSuiteCoordonnees(char** entree, int nombre);
-static int etendueSuiteCoordonnees(Coordonnee* a, Coordonnee* b);
-static void etendreSuiteCoordonnees(Coordonnee cible[], int etendue);
-
-
 // GET & SET de COORDONNEE
 int getY(Coordonnee* c) { return c->y; }
 int getX(Coordonnee* c) { return c->x; }
@@ -50,6 +39,14 @@ int initSuiteCoordonnees(Coordonnee cible[], int n, int i, int j) {
 	for(k = 0; k < n; k++)
 		initCoordonnee(&cible[k], i, j);
 	return n;
+}
+int initSuiteCoordonnees(Coordonnee cible[], int n, const char* texte) {
+	char **super;
+	allocSuperString(&super, TAILLE_ENTREE);
+	split(texte, super, n);
+	int x = initSuiteCoordonnees(cible, n, super);
+	freeSuperString(&super, TAILLE_ENTREE);
+	return x;
 }
 int initSuiteCoordonnees(Coordonnee cible[], int n, char** textes) {
 	int i, etendue = etendueSuiteCoordonnees(textes, n);
@@ -193,11 +190,7 @@ static void etendreSuiteCoordonnees(Coordonnee cible[], int etendue) {
 
 void testsCoordonnees() {
 	Coordonnee c, k, l, m, n, liste[4];
-	char **entreesZ1, **entreesZ2;
 	int validite;
-
-	allocSuperString(&entreesZ1, TAILLE_ENTREE);
-	allocSuperString(&entreesZ2, TAILLE_ENTREE);
 
 	afficher("\n###################################");
 	afficher("\n### *** FICHIER COORDONNEES *** ###\n");
@@ -228,13 +221,8 @@ void testsCoordonnees() {
 	assertEquals(getY(&liste[2]), 2, "Coordonnee liste[2].y = 2 ('C') ");
 	assertEquals(getX(&liste[2]), 1, "Coordonnee liste[2].x = 1       ");
 	
-
-
-	split("B9 A3 C5", entreesZ1, 3);
-	split("A0 A3", entreesZ2, 2);
-	
 	afficher("\n # FONCTION initSuiteCoordonnees(['B9', 'A3', 'C5'])\n");
-	validite = initSuiteCoordonnees(liste, 3, entreesZ1);
+	validite = initSuiteCoordonnees(liste, 3, "B9 A3 C5");
 	assertEquals(getY(&liste[0]), 1, "Coordonnee liste[0].y = 1 ('B') ");
 	assertEquals(getX(&liste[0]), 9, "Coordonnee liste[0].x = 9       ");
 	assertEquals(getY(&liste[1]), 0, "Coordonnee liste[1].y = 0 ('A') ");
@@ -259,7 +247,7 @@ void testsCoordonnees() {
 	assertEquals(getX(&liste[3]), 3, "Coordonnee liste[2].x = 3       ");
 
 	afficher("\n # FONCTION initSuiteCoordonnees(['A0','A3','',''])\n");
-	validite = initSuiteCoordonnees(liste, 2, entreesZ2);
+	validite = initSuiteCoordonnees(liste, 2, "A0 A3");
 	assertEquals(getY(&liste[0]), 0, "Coordonnee liste[0].y = 0 ('A') ");
 	assertEquals(getX(&liste[0]), 0, "Coordonnee liste[0].x = 0       ");
 	assertEquals(getY(&liste[1]), 0, "Coordonnee liste[1].y = 0 ('A') ");
@@ -271,6 +259,4 @@ void testsCoordonnees() {
 	assertEquals(validite, 4, "Liste de coordonnees valide.");
 	
 
-	freeSuperString(&entreesZ1, TAILLE_ENTREE);
-	freeSuperString(&entreesZ2, TAILLE_ENTREE);
 }

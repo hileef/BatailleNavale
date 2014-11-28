@@ -7,12 +7,6 @@
 #include "proprietes.cpp"
 #include "cli.h"
 
-// Les prototypes privés
-static int radar_NON_C(Plateau* p, int y, int x, int rayon, char c);
-static bool case_NON_C(Plateau* p, int y, int x, char c);
-static bool caseNonVide(Plateau* p, int y, int x);
-static void coulerBateau(Bateau* b, Plateau* tirs);
-
 void allouerPlateau(Plateau* p) {
 	allouerPlateau(p, TAILLE);
 }
@@ -151,32 +145,24 @@ static int radar_NON_C(Plateau* p, int y, int x, int rayon, char c) {
 
 void afficherPlateau(Plateau* p) {
 	int i, j, taille = p->taille;
-	char conv[5];
+	char s[TAILLE_ENTREE];
 
 	afficher("    ");
 	for(i = 0; i < taille; i++) {
 		//printf(" %d ", i);
-		afficher(" ");
-		intToString(conv, i);
-		afficher(conv);
-		afficher("  ");
+		afficher(" ", i, "  ");
 	}
 	afficher("\n    ");
 	for(i = 0; i < taille; i++)
 		afficher("   ");
 	afficher("\n");
 	for(i = 0; i < taille; i++) {
-		//printf(" %c  ", lettreDeChiffre(i));
-		afficher(" ");
-		charToString(conv, 'A' + i);
-		afficher(conv);
-		afficher("  ");
+		charToString(s, 'A' + i);
+		afficher(" ", s, "  ");
 		for(j = 0; j < taille; j++) {
 			//printf(" %c ", getCase(p, i, j));
-			afficher(" ");
-			charToString(conv, getCase(p, i, j));
-			afficher(conv);
-			afficher("  ");
+			charToString(s, getCase(p, i, j));
+			afficher(" ", s, "  ");
 		}
 			
 		afficher("\n\n");
@@ -191,17 +177,14 @@ void afficherBateauxDisponibles(Plateau* p) {
 
 
 void testsPlateau() {
-	char** liste;
 	Coordonnee tirv, tirv2, destroyer[10];
-	Coordonnee *tir = &tirv;
-	Coordonnee *tir2 = &tirv2;
+	Coordonnee *tir = &tirv, *tir2 = &tirv2;
 	Plateau plateau, bateaux, tirs;
 	Plateau *p, *b, *t;
 	p = &plateau;
 	b = &bateaux;
 	t = &tirs;
 	allouerPlateau(p);
-	allocSuperString(&liste, TAILLE_ENTREE);
 
 	afficher("\n###############################");
 	afficher("\n### *** FICHIER PLATEAU *** ###\n");
@@ -231,8 +214,7 @@ void testsPlateau() {
 	initPlateau(t);
 	initCoordonnee(tir, 5, 5);
 	initCoordonnee(tir2, 5, 3);
-	split("F4 F5", liste, 2);
-	initSuiteCoordonnees(destroyer, 2, liste);
+	initSuiteCoordonnees(destroyer, 2, "F4 F5");
 
 	afficher("\n # FONCTION placerBateau(['F4','F5'])\n");
 	placerBateau(b, destroyer, 2);
@@ -272,5 +254,4 @@ void testsPlateau() {
 	detruirePlateau(p);
 	detruirePlateau(b);
 	detruirePlateau(t);
-	freeSuperString(&liste, TAILLE_ENTREE);
 }

@@ -39,8 +39,13 @@ bool 	caseNonVide(Plateau* p, Coordonnee* x);
 int 	radar(Plateau* p, Coordonnee* tir);
 bool 	tousBateauxTouches(Plateau* bateaux, Plateau* tirs);
 
+// Les prototypes privés
+static 	int  radar_NON_C(Plateau* p, int y, int x, int rayon, char c);
+static 	bool case_NON_C(Plateau* p, int y, int x, char c);
+static 	bool caseNonVide(Plateau* p, int y, int x);
+static 	void coulerBateau(Bateau* b, Plateau* tirs);
 
-
+// Les tests
 void 	testsPlateau();
 
 #endif
