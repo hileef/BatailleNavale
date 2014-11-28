@@ -82,7 +82,7 @@ static int jouerTours(Partie* p) {
 }
 
 static bool tourJoueur(Partie* p, int joueur){
-	couleur(joueur);
+	
 	demanderTirAuJoueur(p, joueur);
 	return tousBateauxTouches(p, joueur);
 }
@@ -91,6 +91,8 @@ static void demanderTirAuJoueur(Partie* p, int joueur) {
 	Coordonnee tir;
 	bool tirValide, tirPlace;
 	tirValide = tirPlace = true;
+
+	couleur(joueur);
 
 	do {
 
@@ -128,6 +130,8 @@ static void demanderBateauxAuJoueur(Partie* p, int joueur) {
 	bool bateauValide, bateauAutorise, bateauPlace;
 	bateauValide = bateauAutorise = bateauPlace = true;
 	Coordonnee liste[TAILLE_ENTREE];
+
+	couleur(joueur);
 
 	for(i = 0; i < nombreBateauxTotal; i++) { do {
 
