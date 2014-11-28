@@ -14,7 +14,10 @@ void setX(Coordonnee* c, int x) { c->x = x; }
 
 
 bool egal(Coordonnee* a, Coordonnee* b) {
-	return ((getY(a) == getY(b)) && (getX(a) == getX(b)));
+	if ((getY(a) == getY(b)) && (getX(a) == getX(b)))
+		return true;
+	else
+		return false;
 }
 
 // INIT COORDONNEE
@@ -32,126 +35,155 @@ bool initCoordonnee(Coordonnee* c, const char* texte) {
 
 
 // INIT SUITE COORDONNEES
-int initSuiteCoordonnees(Coordonnee cible[], int n) {
-	return initSuiteCoordonnees(cible, n, 0, 0); }
-int initSuiteCoordonnees(Coordonnee cible[], int n, int i, int j) {
+int initSuiteCoordonnees(Coordonnee tableau_coordonnees[], int n) {
+	return initSuiteCoordonnees(tableau_coordonnees, n, 0, 0); }
+int initSuiteCoordonnees(Coordonnee tableau_coordonnees[], int n, int i, int j) {
 	int k;
 	for(k = 0; k < n; k++)
-		initCoordonnee(&cible[k], i, j);
+		initCoordonnee(&tableau_coordonnees[k], i, j);
 	return n;
 }
-int initSuiteCoordonnees(Coordonnee cible[], int n, const char* texte) {
+int initSuiteCoordonnees(Coordonnee tableau_coordonnees[], int n, const char* texte) {
 	char **super;
 	allocSuperString(&super, TAILLE_ENTREE);
 	split(texte, super, n);
-	int x = initSuiteCoordonnees(cible, n, super);
+	int x = initSuiteCoordonnees(tableau_coordonnees, n, super);
 	freeSuperString(&super, TAILLE_ENTREE);
 	return x;
 }
-int initSuiteCoordonnees(Coordonnee cible[], int n, char** textes) {
+int initSuiteCoordonnees(Coordonnee tableau_coordonnees[], int n, char** textes) {
 	int i, etendue = etendueSuiteCoordonnees(textes, n);
 
 	for(i = 0; i < n; i++) {
-		if(!initCoordonnee(&cible[i], textes[i])) return false;
+		if(!initCoordonnee(&tableau_coordonnees[i], textes[i])) 
+			return false;
 	}
 
 	if(n == 2 && etendue > 2)
-		etendreSuiteCoordonnees(cible, etendue);
+		etendreSuiteCoordonnees(tableau_coordonnees, etendue);
 
 	if(etendue > 2)
-		return validerSuiteCoordonnees(cible, etendue);
-	else return validerSuiteCoordonnees(cible, n);
+		return validerSuiteCoordonnees(tableau_coordonnees, etendue);
+	else 
+		return validerSuiteCoordonnees(tableau_coordonnees, n);
 }
 
-static int validerSuiteCoordonnees(Coordonnee cible[], int nombre) {
-	int orientation = sontAlignees(cible, nombre);
-	if(orientation == 0) return 0;
-	if(sontALaSuite(cible, nombre, orientation) == 0) return 0;
-	return nombre;
+static int validerSuiteCoordonnees(Coordonnee tableau_coordonnees[], int nombre_coordonnees) {
+	int orientation = orientationAlignement(tableau_coordonnees, nombre_coordonnees);
+	if(orientation == 0) 
+		return 0;
+	if(variationEtOrdre(tableau_coordonnees, nombre_coordonnees, orientation) == 0) 
+		return 0;
+	return nombre_coordonnees;
 }
 
 //	Verifie si les coordonees donnes sont bien une lettre et un chiffre,
 // 		et qu'ils font bien parti des limites du tableau, auquel cas
 //		sauvegarder dans c et renvoyer 1 sinon renvoyer 0.
 static bool validerCoordonnee(char y, char x, Coordonnee *c) {
-	bool maj = true;
+	bool majuscule = true;
 
-	if(x < '0' || x >= '0' + TAILLE) return false;
-	if(y < 'A' || y >= 'A' + TAILLE) maj = false;
-	if(!maj && (y < 'a' || y >= 'a' + TAILLE)) return false;
+	if(x < '0' || x >= '0' + TAILLE) 
+		return false;
+	if(y < 'A' || y >= 'A' + TAILLE) 
+		majuscule = false;
+	if(!majuscule && (y < 'a' || y >= 'a' + TAILLE)) 
+		return false;
 
-	setY(c, (maj) ? y - 'A' : y - 'a');
+	setY(c, (majuscule) ? y - 'A' : y - 'a');
 	setX(c, x - '0');
 	return true;
 }
 
 //	Verifie si les coordonnees sont bien alignees (ex A0 A1 :OK ; A0 B1 :NON)
 // 		Renvoie 0 si non, 1 si Vertical, 2 si horizontal
-static int sontAlignees(Coordonnee cible[], int nombre) {
+static int orientationAlignement(Coordonnee tableau_coordonnees[], int nombre_coordonnees) {
 	int i, t, horizontal, vertical;
 	horizontal = vertical = 1;
 
-	t = getY(&cible[0]);
-	for(i = 1; i < nombre; i++){
-		if(t != getY(&cible[i])) horizontal = 0; 
+	t = getY(&tableau_coordonnees[0]);
+	for(i = 1; i < nombre_coordonnees; i++){
+		if(t != getY(&tableau_coordonnees[i])) 
+			horizontal = 0; 
 	}
 
-	t = getX(&cible[0]);
-	for(i = 1; i < nombre; i++){
-		if(t != getX(&cible[i])) vertical = 0;
+	t = getX(&tableau_coordonnees[0]);
+	for(i = 1; i < nombre_coordonnees; i++){
+		if(t != getX(&tableau_coordonnees[i])) 
+			vertical = 0;
 	}
 
-	if(!vertical && !horizontal) return 0;
-	else if(vertical) return 1;
-	else return 2;
+	if(!vertical && !horizontal) 
+		return 0;
+	else 
+		if(vertical) 
+			return VERTICAL;
+	else 
+		return HORIZONTAL;
 }
 
 // Verifie si les coordonnes sont bien a la suite (ex A1 A2 A3 :OK ; ex A1 A4 A5 :NON)
 //	Revoie 0 si non, 1 si ordre croissant, 2 si ordre decroissant
-static int sontALaSuite(Coordonnee cible[], int nombre, int orientation) {
+
+static int variationEtOrdre(Coordonnee tableau_coordonnees[], int nombre_coordonnees, int orientation) {
 	int i, t, croissant, decroissant;
 	croissant = decroissant = 1;
 
-	if(orientation == 2) {
-		t = getX(&cible[0]);
-		for(i = 1; i < nombre; i++) {
-			if(getX(&cible[i]) != t + i) croissant = 0;
-			if(getX(&cible[i]) != t - i) decroissant = 0;
+	if(orientation == HORIZONTAL) {
+		t = getX(&tableau_coordonnees[0]);
+		for(i = 1; i < nombre_coordonnees; i++) {
+			if(getX(&tableau_coordonnees[i]) != t + i) 
+				croissant = 0;
+			if(getX(&tableau_coordonnees[i]) != t - i) 
+				decroissant = 0;
 		}
-	} else if(orientation == 1) {
-		t = getY(&cible[0]);
-		for(i = 1; i < nombre; i++) {
-			if(getY(&cible[i]) != t + i) croissant = 0;
-			if(getY(&cible[i]) != t - i) decroissant = 0;
+	} else if(orientation == VERTICAL) {
+		t = getY(&tableau_coordonnees[0]);
+		for(i = 1; i < nombre_coordonnees; i++) {
+			if(getY(&tableau_coordonnees[i]) != t + i) 
+				croissant = 0;
+			if(getY(&tableau_coordonnees[i]) != t - i) 
+				decroissant = 0;
 		}
-	} else return 0;
+	} 
+	else 
+		return 0;
 
-	if(!croissant && !decroissant) return 0;
-	else if(croissant) return 1;
-	else return 2;
+	if(!croissant && !decroissant) 
+		return 0;
+	else 
+		if(croissant) 
+			return CROISSANT;
+	else 
+		return DECROISSANT;
 }
 
 
 // 	Verifie si une entree peuvent êtres reformatees exemple: 'A0 A3' -> 'A0 A1 A2 A3'
-//		renvoie 0 si impossible, sinon renvoie le nombre total apres etendue
-static int etendueSuiteCoordonnees(char** entree, int nombre) {
+//		renvoie 0 si impossible, sinon renvoie le nombre_coordonnees total apres etendue
+static int etendueSuiteCoordonnees(char** entree, int nombre_coordonnees) {
 	Coordonnee a, b;
-	if(nombre == 2) {
-		if(initCoordonnee(&a, entree[0]) == 0) return 0;
-		if(initCoordonnee(&b, entree[1]) == 0) return 0;
+	if(nombre_coordonnees == 2) {
+		if(!initCoordonnee(&a, entree[0])) 
+			return 0;
+		if(!initCoordonnee(&b, entree[1])) 
+			return 0;
 		return etendueSuiteCoordonnees(&a, &b);
-	} else return 0;
+	} else 
+		return 0;
 }
 
 // 	Verifie si deux coordonnees peuvent êtres reformatees (ex A1,A3 -> A1,A2,A3 ) 
-//		renvoie 0 si impossible, sinon renvoie le nombre d'elements apres etendue
+//		renvoie 0 si impossible, sinon renvoie le nombre_coordonnees d'elements apres etendue
 static int etendueSuiteCoordonnees(Coordonnee* a, Coordonnee* b) {
 	Coordonnee t[2];
 	t[0] = *a;
 	t[1] = *b;
-	int orientation = sontAlignees(t, 2);
-	if(orientation == 0) return 0;
-	if(sontALaSuite(t, 2, orientation) != 0) return 0;
+	int orientation = orientationAlignement(t, 2);
+	if(orientation == 0) 
+		return 0;
+	if(variationEtOrdre(t, 2, orientation) != 0) 
+		return 0;
 	else if(orientation == 1) 
 		return (getY(a) > getY(b)) ? (getY(a) - getY(b)) + 1 : (getY(b) - getY(a)) + 1;
 	else
@@ -159,28 +191,29 @@ static int etendueSuiteCoordonnees(Coordonnee* a, Coordonnee* b) {
 
 }
 
-// Transforme le tableau de coordonnes cible comme tel : [A0,A3,_,_] -> [A0,A1,A2,A3]
-static void etendreSuiteCoordonnees(Coordonnee cible[], int etendue) {
-	bool croissant;
-	int i, orientation = sontAlignees(cible, 2);
-	cible[etendue - 1] = cible[1];
+// Transforme le tableau de coordonnes tableau_coordonnees comme tel : [A0,A3,_,_] -> [A0,A1,A2,A3]
 
-	if(orientation == 1)
-		croissant = (getY(&cible[0]) < getY(&cible[1]));
+static void etendreSuiteCoordonnees(Coordonnee tableau_coordonnees[], int etendue) {
+	bool croissant;
+	int i, orientation = orientationAlignement(tableau_coordonnees, 2);
+	tableau_coordonnees[etendue - 1] = tableau_coordonnees[1];
+
+	if(orientation == VERTICAL)
+		croissant = (getY(&tableau_coordonnees[0]) < getY(&tableau_coordonnees[1]));
 	else
-		croissant = (getX(&cible[0]) < getX(&cible[1])); 
+		croissant = (getX(&tableau_coordonnees[0]) < getX(&tableau_coordonnees[1])); 
 
 	for(i = 1; i < etendue - 1; i++) {
 		if(croissant) {
-			if(orientation == 1)
-				initCoordonnee(&cible[i], getY(&cible[0]) + i, getX(&cible[0]));
-			else if(orientation == 2) 
-				initCoordonnee(&cible[i], getY(&cible[0]), getX(&cible[0]) + i);
+			if(orientation == VERTICAL)
+				initCoordonnee(&tableau_coordonnees[i], getY(&tableau_coordonnees[0]) + i, getX(&tableau_coordonnees[0]));
+			else if(orientation == HORIZONTAL) 
+				initCoordonnee(&tableau_coordonnees[i], getY(&tableau_coordonnees[0]), getX(&tableau_coordonnees[0]) + i);
 		} else {
-			if(orientation == 1)
-				initCoordonnee(&cible[i], getY(&cible[0]) - i, getX(&cible[0]));
-			else if(orientation == 2) 
-				initCoordonnee(&cible[i], getY(&cible[0]), getX(&cible[0]) - i);
+			if(orientation == VERTICAL)
+				initCoordonnee(&tableau_coordonnees[i], getY(&tableau_coordonnees[0]) - i, getX(&tableau_coordonnees[0]));
+			else if(orientation == HORIZONTAL) 
+				initCoordonnee(&tableau_coordonnees[i], getY(&tableau_coordonnees[0]), getX(&tableau_coordonnees[0]) - i);
 		}
 	}
 
