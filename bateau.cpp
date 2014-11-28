@@ -175,15 +175,8 @@ bool enregistrerTir(BateauMGR* m, Coordonnee* tir) {
 
 void testsBateaux() {
 
-	char **texte;
-	allocSuperString(&texte, TAILLE_ENTREE);
-
-	split("A0 A2", texte, 2);
-	split("B0 B4", texte, 2);
-
 	Coordonnee liste[10];
-	initSuiteCoordonnees(liste, 2, texte);
-	freeSuperString(&texte,TAILLE_ENTREE);
+	initSuiteCoordonnees(liste, 2, "B0 B4");
 
 	Bateau *b = creerBateau(liste, 3);
 	Bateau *b2 = creerBateau(liste, 5);

@@ -28,7 +28,6 @@ static void tests() {
 	testsCoordonnees();
 	testsPlateau();
 	testsBateaux();
-	testsPartie();
 	pause();
 	couleur(0);
 

@@ -160,7 +160,3 @@ static void demanderBateauxAuJoueur(Partie* p, int joueur) {
 
 }
 
-void testsPartie() {
-
-}
-
