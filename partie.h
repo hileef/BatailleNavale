@@ -29,7 +29,6 @@ static void preparerPartie(Partie* p);
 static void fermerPartie(Partie* p);
 
 static void preparerPlateaux(Partie* p);
-static void fermerPlateaux(Partie* p);
 
 static Plateau* getBateaux(Partie* p, int joueur);
 static Plateau* getTirs(Partie* p, int joueur);
