@@ -37,9 +37,9 @@ void initPlateau(Plateau* p) {
 	initPlateau(p, VIDE);
 }
 void initPlateau(Plateau* p, char x) {
-	int j, i;
-	for(i = 0; i < p->taille; i++)
-		for(j = 0; j < p->taille; j++)
+	int i, j;
+	for(i = 0; i < p->taille; ++i)
+		for (j = 0; j < p->taille; ++j)
 			setCase(p, i, j, x);
 }
 
@@ -50,14 +50,20 @@ void setTaille(Plateau* p, int x) {
 	p->taille = x;
 }
 
-char getCase(Plateau* p, Coordonnee* x) {
-	return getCase(p, getY(x), getX(x));
+char getCase(Plateau* p, Coordonnee* coor) {
+	int y, x;
+	y = getY(coor);
+	x = getX(coor);
+	return getCase(p, y, x);
 }
 char getCase(Plateau* p, int y, int x) {
 	return p->board[y][x];
 }
-void setCase(Plateau* p, Coordonnee* x, char c) {
-	setCase(p, getY(x), getX(x), c);
+void setCase(Plateau* p, Coordonnee* coor, char c) {
+	int y, x;
+	y = getY(coor);
+	x = getX(coor);
+	setCase(p, y, x, c);
 }
 void setCase(Plateau* p, int y, int x, char c) {
 	p->board[y][x] = c;
@@ -67,57 +73,69 @@ BateauMGR* getManager(Plateau* p) {
 	return &p->manager;
 }
 
-bool caseNonVide(Plateau* p, Coordonnee* x) {
-	return case_NON_C(p, getY(x), getX(x), VIDE);
+bool caseNonVide(Plateau* p, Coordonnee* coor) {
+	int y, x, c;
+	y = getY(coor);
+	x = getX(coor);
+	c = VIDE;
+	return case_NON_C(p, y, x, c);
 }
 static bool caseNonVide(Plateau* p, int y, int x) {
 	return case_NON_C(p, y, x, VIDE);
 }
 static bool case_NON_C(Plateau* p, int y, int x, char c) {
-	return (getCase(p, y, x) != c);
+	if (getCase(p, y, x) != c)
+		return true;
+	else return false;
 }
 
 bool autoriserBateau(Plateau* p, int taille) {
-	return bateauAutorise(getManager(p), taille);
+	return bateauAutorise(getManager(p), taille);	
 }
 
-bool placerTir(Plateau* bateaux, Plateau* tirs, Coordonnee* x) {
-	if(caseNonVide(tirs, x)) return false;
-	if(caseNonVide(bateaux, x)) {
-		setCase(tirs, x, TOUCHE);
-		if(enregistrerTir(getManager(bateaux), x))
-			coulerBateau(trouverBateau(getManager(bateaux), x), tirs);
+bool placerTir(Plateau* bateaux, Plateau* tirs, Coordonnee* coor) {
+	if (caseNonVide(tirs, coor))
+		return false;
+
+	if (caseNonVide(bateaux, coor)) {
+		setCase(tirs, coor, TOUCHE);
+		if(enregistrerTir(getManager(bateaux), coor))
+			coulerBateau(trouverBateau(getManager(bateaux), coor), tirs);
 	} else
-		setCase(tirs, x, PLOUF);
-	return true;
+		setCase(tirs, coor, PLOUF);	
+	
+	return true; 
 }
 
 bool placerBateau(Plateau* bateaux, Coordonnee liste[], int taille) {
 	int i;
 
-	for(i = 0; i < taille; i++)
-		if(caseNonVide(bateaux, &(liste[i]))) return false;
+	for (i = 0; i < taille; ++i)
+		if (caseNonVide(bateaux, &liste[i]))
+			return false;
 
-	for(i = 0; i < taille; i++)
-		setCase(bateaux, &(liste[i]), taille + '0');
-
+	for (i = 0; i < taille; ++i)
+		setCase(bateaux, &liste[i], taille + '0');
+		
 	enregistrerBateau(getManager(bateaux), liste, taille);
-
+	
 	return true;
 }
 
 bool tousBateauxTouches(Plateau* bateaux, Plateau* tirs) {
-	int i, j, t = getTaille(bateaux);
-	for(i = 0; i < t; i++)
-		for(j = 0; j < t; j++) 
-			if(caseNonVide(bateaux, i, j) && !caseNonVide(tirs, i, j))
+	int i, j, t;
+	t = getTaille(bateaux);
+	for (i = 0; i < t; ++i)
+		for (j = 0; j < t; ++j)
+			if (caseNonVide(bateaux, i, j) && !caseNonVide(tirs, i, j))
 				return false;
 	return true;
 }
 
 static void coulerBateau(Bateau* b, Plateau* tirs) {
-	int i, n = getTaille(b);
-	for(i = 0; i < n; i++)
+	int i, c;
+	c = getTaille(b);
+	for (i = 0; i < c; ++i)
 		setCase(tirs, getCoordonnee(b, i), COULE);
 }
 
@@ -144,30 +162,29 @@ static int radar_NON_C(Plateau* p, int y, int x, int rayon, char c) {
 }
 
 void afficherPlateau(Plateau* p) {
-	int i, j, taille = p->taille;
-	char s[TAILLE_ENTREE];
-
-	afficher("    ");
-	for(i = 0; i < taille; i++) {
-		//printf(" %d ", i);
-		afficher(" ", i, "  ");
-	}
-	afficher("\n    ");
-	for(i = 0; i < taille; i++)
-		afficher("   ");
-	afficher("\n");
-	for(i = 0; i < taille; i++) {
-		charToString(s, 'A' + i);
-		afficher(" ", s, "  ");
-		for(j = 0; j < taille; j++) {
-			//printf(" %c ", getCase(p, i, j));
-			charToString(s, getCase(p, i, j));
-			afficher(" ", s, "  ");
+	int i, j, taille;
+	taille = p->taille;
+	char t[TAILLE_ENTREE];
+	
+	afficher("   ");
+	for (i = 0; i < taille; ++i)
+		afficher(" ", i, " ");
+		
+	afficher ("\n	");
+	for (i = 0; i < taille; ++i)
+		afficher(" ");
+		
+	afficher ("\n");
+	for (i = 0; i < taille; ++i) {
+		charToString(t, 'A' + i);
+	afficher(" ", t, " ");
+	
+	for (j = 0; j < taille; ++j) {
+		charToString(t, getCase(p, i, j));
+		afficher(" ", t, " ");
+			}
+	afficher("\n\n");
 		}
-			
-		afficher("\n\n");
-	}
-
 	afficher("\n");
 }
 

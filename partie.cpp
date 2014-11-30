@@ -162,11 +162,14 @@ static void demanderTirAuJoueur(Partie* p, int joueur) {
 
 static void resultatsTirsJoueur(Partie* p, Coordonnee* tir, int joueur){
 	int autreJoueur;
-		if(joueur == 1)
+	if(joueur == 1)
 		autreJoueur = 2;
-			else autreJoueur = 1;
+	else
+		autreJoueur = 1;
+	
 	nettoyerAffichage();
 	afficherPlateau(getTirs(p,joueur));
+	
 	if(RADAR_ACTIVE && getCase(getTirs(p,joueur), tir) == PLOUF) {
 		int r = radar(getBateaux(p, autreJoueur), tir);
 		if(r > 0) {
@@ -174,6 +177,7 @@ static void resultatsTirsJoueur(Partie* p, Coordonnee* tir, int joueur){
 			afficher(" case(s).\n Faites attention, les epaves restent des bateaux.");
 		}
 	}
+	
 	pause();
 }
 
@@ -198,22 +202,22 @@ static void demanderBateauxAuJoueur(Partie* p, int joueur) {
 			afficherBateauxDisponibles(getBateaux(p,joueur));
 
 			if(!bateauValide)
-			afficher("Ce bateau n'est pas valide. Veuillez Recommencer.");
+				afficher("Ce bateau n'est pas valide. Veuillez Recommencer.\n");
 			if(!bateauAutorise)
-			afficher("Ce bateau n'est pas disponible. Veuillez recommencer.");
+				afficher("Ce bateau n'est pas disponible. Veuillez recommencer.\n");
 			if(!bateauPlace)
-			afficher("Il n'y a pas la place pour un bateau. Veuillez recommencer.");
-			afficher("Veuillez entrer les coordonnees de votre bateau. \n ( exemple: 'A2 D2' ou: 'h9 h8 h7 h6' )");
-
+				afficher("Il n'y a pas la place pour un bateau. Veuillez recommencer.\n");
+			
 			bateauValide = true;
 			bateauAutorise = true;
 			bateauPlace = true;
 
+			afficher("Veuillez entrer les coordonnees de votre bateau. \n ( exemple: 'A2 D2' ou: 'h9 h8 h7 h6' )");
 
-				if((bateauValide = (taille = demanderCoordonnees(" : ", liste, TAILLE_ENTREE)) > 0)) {
-					if((bateauAutorise = autoriserBateau(getBateaux(p, joueur), taille)))
-						bateauPlace = placerBateau(getBateaux(p, joueur), liste, taille);
-				}
+			if((bateauValide = (taille = demanderCoordonnees(" : ", liste, TAILLE_ENTREE)) > 0)) {
+				if((bateauAutorise = autoriserBateau(getBateaux(p, joueur), taille)))
+					bateauPlace = placerBateau(getBateaux(p, joueur), liste, taille);
+			}
 
 
 		} while(!(bateauValide && bateauAutorise && bateauPlace)); 
