@@ -1,6 +1,6 @@
 // unittest.cpp
 #include <math.h>
-
+#include <stdlib.h>
 #include "unittest.h"
 
 void assertTrue(bool cond, const std::string& s) {
