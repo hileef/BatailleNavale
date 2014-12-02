@@ -96,6 +96,7 @@ void allouerManager(BateauMGR* m){
 	setPremier(m, NULL);
 	setDernier(m, NULL);
 }
+
 void detruireManager(BateauMGR* m){
 	Bateau *b, *suivant = getPremier(m);
 	while((b = suivant) != NULL) {
@@ -168,7 +169,7 @@ void enregistrerBateau(BateauMGR* m, Coordonnee liste[], int taille) {
 
 bool enregistrerTir(BateauMGR* m, Coordonnee* tir) {
 	Bateau* b;
-	if((b = trouverBateau(m, tir)) != NULL) 
+	if((b = trouverBateau(m, tir)) != NULL)
 		return toucherBateau(b);
 	return false;
 }
@@ -194,24 +195,145 @@ void testsBateaux() {
 	setTaille(b, 5);
 	assertEquals(getTaille(b), 5, "taille = 5");
 
-	afficher("\n # FONCTION getTouche()\n");
+	afficher("\n # FONCTION getTouches()\n");
 	BateauMGR MonBateauMGR;
 	BateauMGR *mgr = &MonBateauMGR;
-	Bateau *MonBateau = creerBateau(liste, 3);
+	Bateau *MonBateau = creerBateau(liste, 4);
 	allouerManager(mgr);
 	ajouterBateau(mgr, MonBateau);
 	Coordonnee t;
 	Coordonnee *tir = &t;
-	initCoordonnee(tir,"B1");
+	initCoordonnee(tir,"B0");
 	enregistrerTir(mgr, tir);
-	assertEquals(getTouches(MonBateau), 1,"Bateau touche a la case 'B1' ");
+	assertEquals(getTouches(MonBateau), 1,"MonBateau touche a la case 'B0' ");
 
+
+
+	afficher("\n # FONCTION setTouches()\n");
+	setTouches(MonBateau, 2);
+	assertEquals(getTouches(MonBateau), 2, "Bateau a ete touche 2 fois");
+
+	afficher("\n # FONCTION incTouches()\n");
+	incTouches(MonBateau);
+	assertEquals(getTouches(MonBateau), 3, "il a ete toucher 3 fois");
+
+	afficher("\n # FONCTION setSuivant()\n");
+    Bateau *BateauSuivant = creerBateau(liste, 3);
+	setSuivant(MonBateau, BateauSuivant);
+	assertEquals(getSuivant(MonBateau), BateauSuivant, "le bateau suivant est BateauSuivant");
+
+	afficher("\n # FONCTION setPrecedent()\n");
+	Bateau *BateauPrecedent = creerBateau(liste, 5);
+	setSuivant(MonBateau, BateauPrecedent);
+	assertEquals(getSuivant(MonBateau), BateauPrecedent, "le bateau precedent est BateauPrecedent");
+
+
+	afficher("\n # FONCTION getCoordonnee()\n");
+	initSuiteCoordonnees(liste, 2, "A0 A3");
+	Bateau *NouveauBateau = creerBateau(liste,4);
+	Coordonnee c;
+	Coordonnee *coordonnee = &c;
+	initCoordonnee(coordonnee,"A2");
+	assertTrue(egal(getCoordonnee(NouveauBateau, 2), coordonnee), "a la case 2 on a la coordonnee A2");
+
+    afficher("\n # FONCTION setCoordonnee()\n");
+    setCoordonnee(NouveauBateau, 2, coordonnee);
+    assertTrue(egal(getCoordonnee(NouveauBateau, 2),coordonnee), "la coordonnee de mon NouveauBateau est A2");
+
+    afficher("\n # FONCTION setPremier()\n");
+	setPremier(mgr,NouveauBateau);
+	assertEquals(getPremier(mgr), NouveauBateau, "le premier bateau est NouveauBateau");
+
+    afficher("\n # FONCTION setDernier()\n");
+    setDernier(mgr, NouveauBateau);
+    assertEquals(getDernier(mgr), NouveauBateau, "le dernier bateau est NouveauBateau");
+
+    afficher("\n # FONCTION getPremier()\n");
+    assertEquals(getPremier(mgr), NouveauBateau, "il y a un premier bateau");
+
+    afficher("\n # FONCTION getDernier()\n");
+    assertEquals(getPremier(mgr), NouveauBateau, "il y a un dernier bateau");
+
+    afficher("\n # FONCTION totalBateauxAutorises()\n");
+    assertEquals(totalBateauxAutorises(), 5, "on a le droit a 5 bateaux MAXI");
+
+    afficher("\n # FONCTION bateauAutorise(BateauMGR* m, int taille)\n");
+    assertTrue(bateauAutorise(mgr, 3), "bateaux de taille 3 autorise");
+    assertTrue(bateauAutorise(mgr, 5), "bateaux de taille 5 autorise");
+
+
+    afficher("\n # FONCTION bateauxRestantsAutorises(BateauMGR* m, int taille)\n");
+    assertEquals(bateauxRestantsAutorises(mgr, 3), 2, "il reste 2 bateaux de taille 3 a placer");
+    assertEquals(bateauxRestantsAutorises(mgr, 5), 1, "il reste 1 bateaux de taille 5 a placer");
+
+
+    afficher("\n # FONCTION afficherBateauxRestantsAutorises(BateauMGR* m)\n");
+    afficherBateauxRestantsAutorises(mgr);
+
+    afficher("\n # FONCTION allouerManager(BateauMGR* m)\n");
+    setPremier(mgr, NouveauBateau);
+    setDernier(mgr, NouveauBateau);
+    assertEquals(getPremier(mgr), NouveauBateau, "allocation d'un bateau en premiere position dans le manager");
+    assertEquals(getDernier(mgr), NouveauBateau, "allocation d'un bateau en derniere position dans le manager");
+
+
+    afficher("\n # FONCTION detruireManager(BateauMGR* m)\n");
+    setPremier(mgr, NouveauBateau);
+	setDernier(mgr, NouveauBateau);
+	detruireBateau(NouveauBateau);
+	assertEquals(getPremier(mgr), NouveauBateau, "il existe plus de bateau dans le mgr");
+	assertEquals(getDernier(mgr), NouveauBateau, "il existe plus de bateau dans le mgr");
+
+	afficher("\n # FONCTION detruireBateau(Bateau* b)\n");
+	setSuivant(MonBateau, NouveauBateau);
+    detruireBateau(NouveauBateau);
+	assertEquals(getSuivant(MonBateau), NouveauBateau, "il existe plus de bateau NouveauBateau");
+
+
+
+	afficher("\n # FONCTION creerBateau(Coordonnee liste[], int taille)\n");
+	assertEquals(creerBateau(liste, 4), NouveauBateau, "un bateau de taille 4 a ete creer");
+
+	afficher("\n # FONCTION trouverBateau(BateauMGR* m, Coordonnee* x)\n");
+	assertEquals(trouverBateau(mgr, coordonnee), NouveauBateau, "on a trouver un bateau NouveauBateau");
+
+	afficher("\n # FONCTION bateauContient(Bateau* b, Coordonnee* x)\n");
+	assertTrue(bateauContient(NouveauBateau, coordonnee), "coordonee A2 dans NouveauBateau");
+
+
+	afficher("\n # FONCTION toucherBateau(Bateau* b)\n");
+	incTouches(MonBateau);
+	assertEquals(getTouches(MonBateau), 4,"MonBateau touche a la case 'B0' 'B1' 'B2' 'B3' ");
+	assertEquals(getTaille(MonBateau), 4, "MonBateau fait une taille 4");
+
+
+    afficher("\n # FONCTION enregistrerTir(BateauMGR* m, Coordonnee* tir)\n");
+    Coordonnee t2;
+	Coordonnee *tir2 = &t2;
+	initCoordonnee(tir2,"A1");
+	enregistrerTir(mgr, tir2);
+	assertEquals(getTouches(NouveauBateau), 1,"NouveauBateau touche a la case 'A1' ");
+	
+	afficher("\n # FONCTION ajouterBateau(BateauMGR* , Bateau* b)\n");
+	// reset manager
+	Coordonnee trr, *tir_russe = &trr;
+	Coordonnee plan_mistral[TAILLES_MAX];
 	detruireManager(mgr);
+	allouerManager(mgr);
+	initSuiteCoordonnees(plan_mistral, 4, "A0 A1 A2 A3");
+	Bateau* mistral = creerBateau(plan_mistral, 4);
+	ajouterBateau(mgr, mistral);
+	initCoordonnee(tir_russe, "A1");
+	assertEquals(trouverBateau(mgr, tir_russe), mistral, "Bateau mistral ajoute et trouve ");
+	
+	afficher("\n # FONCTION enregistrerBateau(BateauMGR* m, Coordonnee liste[], int taille)\n");
+	Coordonnee tar, *tir_americain = &tar;
+	Coordonnee ttr, *test = &ttr;
+	Coordonnee plan_kennedy[TAILLES_MAX];
+	initSuiteCoordonnees(plan_kennedy, 5, "B0 B1 B2 B3 B4");
+	enregistrerBateau(mgr, plan_kennedy, 5);
+	initCoordonnee(tir_americain, "B1");
+	initCoordonnee(test, "B0");
+	assertTrue(egal(getCoordonnee(trouverBateau(mgr, tir_americain), 0), test), "Bateau kennedy ajoute et trouve ");
+	
 }
-
-
-
-
-
-
-
