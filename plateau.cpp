@@ -18,7 +18,7 @@ void allouerPlateau(Plateau* p, int taille) {
 		p->board[i] = (char*) malloc(sizeof(char) * taille);
 	setTaille(p, taille);
 
-	allouerManager(getManager(p));
+	allouerListe(getListeBateau(p));
 }
 
 void detruirePlateau(Plateau* p) {
@@ -29,7 +29,7 @@ void detruirePlateau(Plateau* p) {
 	free(p->board);
 	setTaille(p, 0);
 
-	detruireManager(getManager(p));
+	detruireListe(getListeBateau(p));
 }
 
 
@@ -69,7 +69,7 @@ void setCase(Plateau* p, int y, int x, char c) {
 	p->board[y][x] = c;
 }
 
-BateauMGR* getManager(Plateau* p) {
+ListeBateau* getListeBateau(Plateau* p) {
 	return &p->manager;
 }
 
@@ -90,7 +90,7 @@ static bool case_NON_C(Plateau* p, int y, int x, char c) {
 }
 
 bool autoriserBateau(Plateau* p, int taille) {
-	return bateauAutorise(getManager(p), taille);	
+	return bateauAutorise(getListeBateau(p), taille);	
 }
 
 bool placerTir(Plateau* bateaux, Plateau* tirs, Coordonnee* coor) {
@@ -99,8 +99,8 @@ bool placerTir(Plateau* bateaux, Plateau* tirs, Coordonnee* coor) {
 
 	if (caseNonVide(bateaux, coor)) {
 		setCase(tirs, coor, TOUCHE);
-		if(enregistrerTir(getManager(bateaux), coor))
-			coulerBateau(trouverBateau(getManager(bateaux), coor), tirs);
+		if(enregistrerTir(getListeBateau(bateaux), coor))
+			coulerBateau(trouverBateau(getListeBateau(bateaux), coor), tirs);
 	} else
 		setCase(tirs, coor, PLOUF);	
 	
@@ -117,7 +117,7 @@ bool placerBateau(Plateau* bateaux, Coordonnee liste[], int taille) {
 	for (i = 0; i < taille; ++i)
 		setCase(bateaux, &liste[i], taille + '0');
 		
-	enregistrerBateau(getManager(bateaux), liste, taille);
+	enregistrerBateau(getListeBateau(bateaux), liste, taille);
 	
 	return true;
 }
@@ -189,7 +189,7 @@ void afficherPlateau(Plateau* p) {
 }
 
 void afficherBateauxDisponibles(Plateau* p) {
-	afficherBateauxRestantsAutorises(getManager(p));
+	afficherBateauxRestantsAutorises(getListeBateau(p));
 }
 
 
