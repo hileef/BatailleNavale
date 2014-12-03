@@ -5,7 +5,7 @@
 #include "coordonnees.h"
 
 struct Plateau {
-	BateauMGR manager;
+	ListeBateau manager;
 	char** board;
 	int taille;
 };
@@ -26,7 +26,7 @@ char 	getCase(Plateau* p, int y, int x);
 void 	setCase(Plateau* p, Coordonnee* x, char c);
 void 	setCase(Plateau* p, int y, int x, char c);
 
-BateauMGR* getManager(Plateau* p);
+ListeBateau* getListeBateau(Plateau* p);
 
 void 	afficherPlateau(Plateau* p);
 void 	afficherBateauxDisponibles(Plateau* p);
