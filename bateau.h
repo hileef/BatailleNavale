@@ -29,41 +29,41 @@ void 	setSuivant(Bateau* b, Bateau* d);
 Bateau* getPrecedent(Bateau* b);
 void 	setPrecedent(Bateau* b, Bateau* d);
 
-struct BateauMGR {
+struct ListeBateau {
 	Bateau* premier;
 	Bateau* dernier;
 	int compteurs[TAILLES_MAX];
 };
-typedef struct BateauMGR BateauMGR;
+typedef struct ListeBateau ListeBateau;
 
-Bateau* getPremier(BateauMGR* m);
-void 	setPremier(BateauMGR* m, Bateau* b);
+Bateau* getPremier(ListeBateau* m);
+void 	setPremier(ListeBateau* m, Bateau* b);
 
-Bateau* getDernier(BateauMGR* m);
-void 	setDernier(BateauMGR* m, Bateau* b);
+Bateau* getDernier(ListeBateau* m);
+void 	setDernier(ListeBateau* m, Bateau* b);
 
-int 	getCompteur(BateauMGR m, int i);
-void 	setCompteur(BateauMGR m, int i, int x);
-void 	incCompteur(BateauMGR m, int i);
+int 	getCompteur(ListeBateau m, int i);
+void 	setCompteur(ListeBateau m, int i, int x);
+void 	incCompteur(ListeBateau m, int i);
 
-void 	allouerManager(BateauMGR* m);
-void 	detruireManager(BateauMGR* b);
+void 	allouerListe(ListeBateau* m);
+void 	detruireListe(ListeBateau* b);
 
-void 	enregistrerBateau(BateauMGR* m, Coordonnee liste[], int taille);
-Bateau* trouverBateau(BateauMGR* m, Coordonnee* x);
-bool 	bateauAutorise(BateauMGR* m, int taille);
-int 	bateauxRestantsAutorises(BateauMGR* m, int taille);
-void 	afficherBateauxRestantsAutorises(BateauMGR* m);
+void 	enregistrerBateau(ListeBateau* m, Coordonnee liste[], int taille);
+Bateau* trouverBateau(ListeBateau* m, Coordonnee* x);
+bool 	bateauAutorise(ListeBateau* m, int taille);
+int 	bateauxRestantsAutorises(ListeBateau* m, int taille);
+void 	afficherBateauxRestantsAutorises(ListeBateau* m);
 int 	totalBateauxAutorises();
 
-bool 	enregistrerTir(BateauMGR* m, Coordonnee* tir);
+bool 	enregistrerTir(ListeBateau* m, Coordonnee* tir);
 
 // Les prototypes privés
 static void 	detruireBateau(Bateau* b);
 static Bateau* 	creerBateau(Coordonnee liste[], int taille);
 static bool 	bateauContient(Bateau* b, Coordonnee* x);
 static bool 	toucherBateau(Bateau* b);
-static void 	ajouterBateau(BateauMGR* m, Bateau* b);
+static void 	ajouterBateau(ListeBateau* m, Bateau* b);
 
 // Les tests
 void 	testsBateaux();
